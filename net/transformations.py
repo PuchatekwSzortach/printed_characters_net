@@ -63,3 +63,19 @@ def change_intensity(image):
 
     return altered_image
 
+
+def add_noise(image):
+    """
+    Adds uniform noise to image
+    :param image:
+    :return: image with uniform noise applied to it
+    """
+
+    noise_location = np.random.binomial(1, 0.1, image.shape)
+    noise = (np.random.randint(0, 100, image.shape) * noise_location).astype(image.dtype)
+
+    noisy_image = image.copy()
+    noisy_image[noisy_image < 20] += noise[noisy_image < 20]
+    noisy_image[noisy_image > 200] -= noise[noisy_image > 200]
+
+    return noisy_image
