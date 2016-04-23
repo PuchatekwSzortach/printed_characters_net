@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+"""
+This file creates templates for characters we want to be able to detect.
+Templates are simple, front facing images without any distortions, blemishes, etc.
+"""
+
 import os
 import sys
 
