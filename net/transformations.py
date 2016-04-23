@@ -36,7 +36,7 @@ def rotate_image(image):
     """
 
     # Get rotation amount in degrees
-    max_angle = 20
+    max_angle = 30
     angle = np.random.randint(-max_angle, max_angle)
 
     # Get rotation centre

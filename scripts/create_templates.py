@@ -19,7 +19,7 @@ def main():
 
     font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=100)
 
-    characters = "ABCDE"
+    characters = "ABCDEFGHIJKLMN"
 
     templates_maker = net.data.TemplatesMaker(font, (64, 64))
 
