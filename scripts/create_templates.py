@@ -5,13 +5,8 @@ This file creates templates for characters we want to be able to detect.
 Templates are simple, front facing images without any distortions, blemishes, etc.
 """
 
-import os
-import sys
-
 import PIL.ImageFont
 import cv2
-
-# sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/' + '..'))
 import net.data
 
 

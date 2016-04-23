@@ -36,7 +36,7 @@ def rotate_image(image):
     """
 
     # Get rotation amount in degrees
-    max_angle = 30
+    max_angle = 20
     angle = np.random.randint(-max_angle, max_angle)
 
     # Get rotation centre
@@ -44,4 +44,22 @@ def rotate_image(image):
 
     rotation_matrix = cv2.getRotationMatrix2D((x, y), angle, 1)
     return cv2.warpAffine(image, rotation_matrix, dsize=image.shape)
+
+
+def change_intensity(image):
+    """
+    Change background and foreground intensity by a random value
+    :param image:
+    :return: Image with intensity of background and foreground changed
+    """
+
+    background_change, foreground_change = np.random.randint(10, 50, [2])
+
+    altered_image = image.copy()
+
+    # We assume black is foreground (character) and white it background
+    altered_image[altered_image < 10] += foreground_change
+    altered_image[altered_image > 200] -= background_change
+
+    return altered_image
 
