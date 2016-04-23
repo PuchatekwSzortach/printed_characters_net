@@ -12,18 +12,16 @@ import net.data
 
 def main():
 
-    font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=50)
+    font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=100)
 
-    characters = "ABCD舞弥藍鸞"
+    characters = "ABCDE"
 
     card_maker = net.data.PlainCardMaker(font, (64, 64))
 
     for character in characters:
 
         image = card_maker.create_image(character)
-        cv2.imshow(character, image)
-
-    cv2.waitKey(0)
+        cv2.imwrite("../../data/characters/templates/" + character + ".jpg", image)
 
 if __name__ == "__main__":
 

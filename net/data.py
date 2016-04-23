@@ -43,10 +43,19 @@ class PlainCardMaker:
         # Cut out portion that contains characters
         upper_left, lower_right = self._get_character_bounding_box(image)
 
-        # Image cropped to contain only character and a small band of padding around it
-        cropped_image = image[upper_left[0]:lower_right[0], upper_left[1]:lower_right[1]]
+        # Image cropped to contain only character
+        character_image = image[upper_left[0]:lower_right[0], upper_left[1]:lower_right[1]]
 
-        return cv2.resize(cropped_image, self.size)
+        padding = 20
+        full_image_size = character_image.shape[0] + 2 * padding, character_image.shape[1] + 2 * padding
+        full_image = 255 * np.ones(full_image_size)
+
+        # Paste character image onto full image
+        full_image[
+            padding:full_image_size[0] - padding,
+            padding:full_image_size[1] - padding] = character_image
+
+        return cv2.resize(full_image, self.size)
 
     def _get_character_bounding_box(self, image):
 
@@ -58,7 +67,5 @@ class PlainCardMaker:
         zero_columns = np.any(image == 0, axis=0)
         zero_columns_indices = np.nonzero(zero_columns)[0]
 
-        padding = 5
-
-        return (zero_rows_indices[0] - padding, zero_columns_indices[0] - padding), \
-               (zero_rows_indices[-1] + padding, zero_columns_indices[-1] + padding)
+        return (zero_rows_indices[0], zero_columns_indices[0]), \
+               (zero_rows_indices[-1], zero_columns_indices[-1])
