@@ -79,3 +79,27 @@ def add_noise(image):
     noisy_image[noisy_image > 200] -= noise[noisy_image > 200]
 
     return noisy_image
+
+
+def apply_perspective_transformation(image):
+    """
+    Apply a random perspective transformation to image
+    :param image:
+    :return: Image skewed by perspective transformation.
+    Note that image will have black artifacts around corners. This is left
+    in output on purpose, as should create a more difficult data set.
+    """
+
+    corners = np.zeros([4, 2], dtype=np.float32)
+
+    corners[0, :] = [0, 0]
+    corners[1, :] = [image.shape[1], 0]
+    corners[2, :] = [image.shape[1], image.shape[0]]
+    corners[3, :] = (0, image.shape[0])
+
+    max_distortion = max(image.shape) / 10
+    distorted_corners = corners + np.random.uniform(-max_distortion, max_distortion, corners.shape).astype(np.float32)
+
+    transformation_matrix = cv2.getPerspectiveTransform(corners, distorted_corners)
+    return cv2.warpPerspective(image, transformation_matrix, image.shape)
+

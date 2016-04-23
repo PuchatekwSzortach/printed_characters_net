@@ -17,7 +17,7 @@ def main():
 
     for index in range(10):
 
-        shifted = net.transformations.add_noise(image)
+        shifted = net.transformations.apply_perspective_transformation(image)
         cv2.imshow(str(index), shifted)
 
     cv2.waitKey(0)
