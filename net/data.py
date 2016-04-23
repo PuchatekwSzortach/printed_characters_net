@@ -41,21 +41,24 @@ class PlainCardMaker:
         image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
 
         # Cut out portion that contains characters
-        upper_left, lower_right = self._get_character_boundig_box(image)
-        return image[upper_left[0]:lower_right[0], upper_left[1]:lower_right[1]]
+        upper_left, lower_right = self._get_character_bounding_box(image)
 
-    def _get_character_boundig_box(self, image):
+        # Image cropped to contain only character and a small band of padding around it
+        cropped_image = image[upper_left[0]:lower_right[0], upper_left[1]:lower_right[1]]
 
-        contours = cv2.findContours(image.copy(), mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)[1]
+        return cv2.resize(cropped_image, self.size)
 
-        x_coordinates = [point[0][1] for contour in contours for point in contour]
-        y_coordinates = [point[0][0] for contour in contours for point in contour]
+    def _get_character_bounding_box(self, image):
 
+        # Image has white background (255 value) and black letter (0 value).
+        # So to find bounding box find locations of columns and rows that have zero elements
+        zero_rows = np.any(image == 0, axis=1)
+        zero_rows_indices = np.nonzero(zero_rows)[0]
 
-        print(min(y_coordinates))
-        print(min(x_coordinates))
+        zero_columns = np.any(image == 0, axis=0)
+        zero_columns_indices = np.nonzero(zero_columns)[0]
 
-        print(max(y_coordinates))
-        print(max(x_coordinates))
+        padding = 5
 
-        return (20, 10), (80, 50)
+        return (zero_rows_indices[0] - padding, zero_columns_indices[0] - padding), \
+               (zero_rows_indices[-1] + padding, zero_columns_indices[-1] + padding)

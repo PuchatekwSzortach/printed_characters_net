@@ -14,7 +14,7 @@ def main():
 
     font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=50)
 
-    characters = "A"
+    characters = "ABCD舞弥藍鸞"
 
     card_maker = net.data.PlainCardMaker(font, (64, 64))
 
