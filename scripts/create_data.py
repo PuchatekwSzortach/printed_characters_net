@@ -18,12 +18,8 @@ def main():
 
     for index in range(10):
 
-        shifted = net.transformations.shift_image(image)
+        shifted = net.transformations.rotate_image(image)
         cv2.imshow(str(index), shifted)
-
-
-
-
 
     cv2.waitKey(0)
 
