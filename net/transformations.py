@@ -9,15 +9,19 @@ import cv2
 
 
 def shift_image(image):
+    """
+    Shift image by a random amount proportional to image size.
+    :param image: image to be shifted
+    :return: shifted image. Note that image will have black artifacts around corners. This is left
+    in output on purpose, as should create a more difficult data set.
+    """
 
-    padding = int(max(image.shape) / 5)
-    large_image = 255 * np.ones((image.shape[0] + 2*padding, image.shape[1] + 2*padding)).astype(np.uint8)
+    max_shift = int(max(image.shape) / 5)
+    y_shift, x_shift = np.random.randint(-max_shift, max_shift, [2])
 
-    large_image[padding:image.shape[0] + padding, padding:image.shape[1] + padding] = image
+    transformation_matrix = np.eye(3)[:2, :]
+    transformation_matrix[0, 2] = x_shift
+    transformation_matrix[1, 2] = y_shift
 
-    y_shift, x_shift = np.random.randint(-padding, padding, [2])
-
-    return large_image[
-           padding + y_shift:padding + y_shift + image.shape[0],
-           padding + x_shift:padding + x_shift + image.shape[1]]
+    return cv2.warpAffine(image, transformation_matrix, dsize=image.shape)
 
