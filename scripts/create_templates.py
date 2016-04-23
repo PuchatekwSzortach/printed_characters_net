@@ -16,11 +16,11 @@ def main():
 
     characters = "ABCDE"
 
-    card_maker = net.data.PlainCardMaker(font, (64, 64))
+    templates_maker = net.data.TemplatesMaker(font, (64, 64))
 
     for character in characters:
 
-        image = card_maker.create_image(character)
+        image = templates_maker.create_template(character)
         cv2.imwrite("../../data/characters/templates/" + character + ".jpg", image)
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ import numpy as np
 import cv2
 
 
-class PlainCardMaker:
+class TemplatesMaker:
     """
     Class for creating plain images of characters.
     Plain image is defined as a simple black character on white background. No noise, rotation, etc included.
@@ -25,7 +25,7 @@ class PlainCardMaker:
         self.font = font
         self.size = size
 
-    def create_image(self, character):
+    def create_template(self, character):
         """
         :param character: character to be shown in the image
         :return: numpy matrix representing the character
