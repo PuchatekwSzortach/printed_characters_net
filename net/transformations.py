@@ -16,7 +16,7 @@ def shift_image(image):
     in output on purpose, as should create a more difficult data set.
     """
 
-    max_shift = int(max(image.shape) / 5)
+    max_shift = int(max(image.shape) / 20)
     y_shift, x_shift = np.random.randint(-max_shift, max_shift, [2])
 
     transformation_matrix = np.eye(3)[:2, :]
@@ -36,7 +36,7 @@ def rotate_image(image):
     """
 
     # Get rotation amount in degrees
-    max_angle = 20
+    max_angle = 5
     angle = np.random.randint(-max_angle, max_angle)
 
     # Get rotation centre
@@ -97,7 +97,7 @@ def apply_perspective_transformation(image):
     corners[2, :] = [image.shape[1], image.shape[0]]
     corners[3, :] = (0, image.shape[0])
 
-    max_distortion = max(image.shape) / 10
+    max_distortion = max(image.shape) / 20
     distorted_corners = corners + np.random.uniform(-max_distortion, max_distortion, corners.shape).astype(np.float32)
 
     transformation_matrix = cv2.getPerspectiveTransform(corners, distorted_corners)
