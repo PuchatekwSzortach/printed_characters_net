@@ -47,7 +47,7 @@ def main():
 
         image = cv2.cvtColor(cv2.imread(template), cv2.COLOR_RGB2GRAY)
 
-        for index in range(100):
+        for index in range(1000):
 
             # Get number of transformations, then get actual transformations in random order
             transformations_count = np.random.randint(1, len(tranformations.keys()) + 1)

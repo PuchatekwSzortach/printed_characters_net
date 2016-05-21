@@ -60,10 +60,10 @@ class Net:
 
     def train(self, data, test_data, epochs, learning_rate):
 
-
         for epoch in range(epochs):
 
-            if epoch % 10 == 0:
+            if epoch % 1 == 0:
+
                 print("Epoch {}".format(epoch))
                 print(self.get_accuracy(test_data))
 
@@ -129,10 +129,10 @@ class Net:
         :param prediction:
         :return:
         """
-
         return prediction - y
 
     def get_accuracy(self, data):
+
 
         is_correct = []
 
@@ -146,8 +146,3 @@ class Net:
             is_correct.append(int(np.all(prediction_saturated == y)))
 
         return np.sum(is_correct) / len(is_correct)
-
-
-
-
-

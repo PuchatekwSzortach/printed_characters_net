@@ -8,8 +8,10 @@ class TestEncoder:
         labels = ["A", "B", "C", "D"]
         encoder = net.utilities.Encoder(labels)
 
-        assert np.all([0, 1, 0, 0] == encoder.encode("B"))
-        assert np.all([0, 0, 0, 1] == encoder.encode("D"))
+
+
+        assert np.all(np.array([0, 1, 0, 0]).reshape(4, 1) == encoder.encode("B"))
+        assert np.all(np.array([0, 0, 0, 1]).reshape(4, 1) == encoder.encode("D"))
 
     def test_decoding(self):
 

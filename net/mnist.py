@@ -48,6 +48,8 @@ def load_mnist_data():
     training_data = [(image, label) for image, label in zip(training_images, training_labels)]
     test_data = [(image, label) for image, label in zip(test_images, test_labels)]
 
+
+
     return training_data, test_data
 
 
