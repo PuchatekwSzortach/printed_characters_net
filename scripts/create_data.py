@@ -43,7 +43,7 @@ def main():
         directory = "../../data/characters/data/" + template_name
 
         if not os.path.exists(directory):
-            os.mkdir(directory)
+            os.makedirs(directory)
 
         image = cv2.cvtColor(cv2.imread(template), cv2.COLOR_RGB2GRAY)
 

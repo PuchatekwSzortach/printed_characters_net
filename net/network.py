@@ -58,18 +58,17 @@ class Net:
 
         return a
 
-    def train(self, data, epochs, learning_rate):
+    def train(self, data, test_data, epochs, learning_rate):
 
 
         for epoch in range(epochs):
 
-            print("Epoch {}".format(epoch))
+            if epoch % 10 == 0:
+                print("Epoch {}".format(epoch))
+                print(self.get_accuracy(test_data))
 
             for x, y in data:
                 self._update(x, y, learning_rate)
-
-            print(self.get_accuracy(data))
-
 
     def _update(self, x, y, learning_rate):
 

@@ -35,8 +35,11 @@ def main():
     vectorized_test_data = vectorize_mnist(test_data)
 
     image_size = training_data[0][0].size
-    network = net.network.Net([image_size, 50, 10])
-    network.train(data=vectorized_training_data, epochs=10, learning_rate=0.01)
+
+    network = net.network.Net([image_size, 100, 50, 30, 10])
+    network.train(
+        data=vectorized_training_data, test_data=vectorized_test_data,
+        epochs=200, learning_rate=0.01)
 
     test_accuracy = network.get_accuracy(vectorized_test_data)
     print("Test accuracy is {}".format(test_accuracy))
