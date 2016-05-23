@@ -47,11 +47,14 @@ def main():
 
         image = cv2.cvtColor(cv2.imread(template), cv2.COLOR_RGB2GRAY)
 
-        for index in range(1000):
+        templates_count = 1000
+        transformations_counts = np.random.randint(1, len(tranformations.keys()) + 1, size=templates_count)
+
+        for index in range(templates_count):
 
             # Get number of transformations, then get actual transformations in random order
-            transformations_count = np.random.randint(1, len(tranformations.keys()) + 1)
-            applied_transformations = random.sample(tranformations.keys(), transformations_count)
+            applied_transformations = random.sample(
+                tranformations.keys(), transformations_counts[index])
 
             transformed_image = image.copy()
 

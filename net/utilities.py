@@ -52,7 +52,7 @@ def get_images(path):
     :return: A list of grayscale images
     """
     images_paths = glob.glob(path + "/*.jpg")
-    images = [cv2.pyrDown(cv2.imread(image_path)) for image_path in images_paths]
+    images = [cv2.imread(image_path) for image_path in images_paths]
     return [cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) for image in images]
 
 

@@ -70,10 +70,10 @@ def main():
     image_size = training_data[0][0].size
     labels_size = len(characters)
 
-    network = net.network.Net([image_size, 50, labels_size])
+    network = net.network.Net([image_size, 100, 100, labels_size])
     network.train(
         data=training_data, test_data=test_data,
-        epochs=10000, learning_rate=0.1)
+        epochs=100, learning_rate=0.01)
 
 
 if __name__ == "__main__":

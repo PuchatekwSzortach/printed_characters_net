@@ -3,6 +3,7 @@ Module with network code
 """
 import warnings
 import numpy as np
+import random
 
 # warnings.filterwarnings('error')
 
@@ -61,6 +62,8 @@ class Net:
     def train(self, data, test_data, epochs, learning_rate):
 
         for epoch in range(epochs):
+
+            random.shuffle(data)
 
             if epoch % 1 == 0:
 
