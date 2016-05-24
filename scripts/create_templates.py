@@ -13,11 +13,19 @@ import os
 
 def get_hiragana_set():
 
-    return [chr(index) for index in range(12354, 12439)]
+    hiragana = {chr(index) for index in range(0x3042, 0x3090)}
+    blacklist = {chr(0x3043), chr(0x3045), chr(0x3047), chr(0x3049), chr(0x3083),
+                 chr(0x3085), chr(0x3087), chr(0x308E)}
+
+    return sorted(list(hiragana.difference(blacklist)))
 
 def get_katakana_set():
 
-    return [chr(index) for index in range(12447, 12544)]
+    katakana = {chr(index) for index in range(0x30A2, 0x30F0)}
+    blacklist = {chr(0x30A3), chr(0x30A5), chr(0x30A7), chr(0x30A9), chr(0x30C3),
+                 chr(0x30E3), chr(0x30E5), chr(0x30E7), chr(0x30EE)}
+
+    return sorted(list(katakana.difference(blacklist)))
 
 def get_digits_set():
 
@@ -30,7 +38,6 @@ def get_kanji_set():
         return content
 
 def main():
-
 
     font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=100)
 
