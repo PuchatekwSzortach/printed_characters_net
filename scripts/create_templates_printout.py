@@ -68,8 +68,8 @@ def main():
     width, height = canvas_size
 
     # Size of image and margin between images on a pdf page
-    image_size = int(width * 0.3)
-    margin = int(width * 0.015)
+    image_size = int(width * 0.2)
+    margin = int(width * 0.06)
 
     paths = glob.glob("../../data/characters/templates/*.jpg")
 
