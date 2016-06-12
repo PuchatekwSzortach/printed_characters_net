@@ -12,7 +12,6 @@ import glob
 import cv2
 import numpy as np
 
-import PIL.Image
 import os.path
 import shutil
 
@@ -31,6 +30,10 @@ def get_image_with_border(image, border_width):
     return bordered_image
 
 def create_page(canvas, canvas_size, paths_iterator, image_size, margin):
+    """
+    Create one page of templates. This function will throw a StopIteration exception
+     when paths_iterator runs out.
+    """
 
     padded_image_size = image_size + (2 * margin)
     width, height = canvas_size
@@ -64,6 +67,7 @@ def main():
     canvas_size = reportlab.lib.pagesizes.A4
     width, height = canvas_size
 
+    # Size of image and margin between images on a pdf page
     image_size = int(width * 0.3)
     margin = int(width * 0.015)
 
@@ -74,11 +78,11 @@ def main():
 
     temporary_dir = "/tmp/templates/"
 
-    try:
+    # Make directory for temporary images if it doesn't already exist
+    if not os.path.exists(temporary_dir):
         os.makedirs(temporary_dir)
-    except os.error:
-        pass
 
+    # Write bordered images to temporary dir
     for path, template in zip(paths, bordered_templates):
         temporary_path = temporary_dir + os.path.basename(path)
         cv2.imwrite(temporary_path, template)
@@ -99,6 +103,7 @@ def main():
 
     canvas.save()
 
+    # Clean up temporary images
     shutil.rmtree(temporary_dir)
 
 if __name__ == "__main__":
