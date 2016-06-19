@@ -6,6 +6,8 @@ templates in real time in camera images.
 
 import cv2
 
+import net.vision
+
 def main():
 
     video_capture = cv2.VideoCapture(0)
@@ -15,6 +17,8 @@ def main():
         _, frame = video_capture.read()
 
         cv2.imshow("image", frame)
+
+        net.vision.CardCandidatesExtractor().get_card_candidates(frame)
 
         key = cv2.waitKey(30)
 
