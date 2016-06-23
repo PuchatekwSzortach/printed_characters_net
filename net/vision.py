@@ -21,6 +21,12 @@ class CardCandidatesExtractor:
 
         outer_contours = self._get_outermost_contours(card_contours, thresholded.shape)
 
+        # OpenCV puts into contour an unnecessary dimension, so remove it
+        squeezed_contours = [np.squeeze(contour) for contour in outer_contours]
+
+        for contour in squeezed_contours:
+            CardReconstructor(image, contour, image.shape).get_reconstruction()
+
 
     def _get_thresholded_image(self, grayscale_image):
 
@@ -62,7 +68,40 @@ class CardCandidatesExtractor:
         cv2.drawContours(image, contours, contourIdx=-1, color=255)
 
         # Use OpenCV for heavy lifting
-        _, contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        return contours
+        _, outer_contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        # Run through sanity check, just to be extra careful, and return results
+        return self._get_card_like_contours(outer_contours, image_shape[0] * image_shape[1])
+
+
+class CardReconstructor:
+    """
+    Class for reconstructing cards (or card candidates) based on video frames and card contours
+    """
+
+    def __init__(self, image, contour, shape):
+        """
+        Given an image, contour inside it and a shape,
+        construct an object that can return image inside a contour with given shape.
+        Return image is realigned so, as to be straight, even if provided contour is not.
+        :param image:
+        :param contour:
+        :param shape:
+        :return:
+        """
+
+        self.image = image
+        self.contour = contour
+        self.shape = shape
+
+        print("Contour")
+        print(contour)
+        print(contour.shape)
+
+    def get_reconstruction(self):
+
+        contours = [self.contour]
+        cv2.drawContours(self.image, contours, -1, (0, 255, 0), 4)
+        pass
 
 

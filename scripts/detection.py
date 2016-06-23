@@ -16,9 +16,8 @@ def main():
 
         _, frame = video_capture.read()
 
-        cv2.imshow("image", frame)
-
         net.vision.CardCandidatesExtractor().get_card_candidates(frame)
+        cv2.imshow("image", frame)
 
         key = cv2.waitKey(30)
 
