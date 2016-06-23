@@ -15,14 +15,11 @@ class CardCandidatesExtractor:
 
         grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY, cv2.THRESH_BINARY)
         thresholded = self._get_thresholded_image(grayscale)
-        cv2.imshow("thresholded", thresholded)
 
         _, contours, _ = cv2.findContours(thresholded.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
         card_contours = self._get_card_like_contours(contours, image.shape[0] * image.shape[1])
 
-        contoured_image = np.zeros_like(thresholded)
-        cv2.drawContours(contoured_image, card_contours, contourIdx=-1, color=255)
-        cv2.imshow("contoured", contoured_image)
+        outer_contours = self._get_outermost_contours(card_contours, thresholded.shape)
 
 
     def _get_thresholded_image(self, grayscale_image):
@@ -58,5 +55,14 @@ class CardCandidatesExtractor:
         # And made of only four points - since our frames should be represented by
         # four points
         return len(contour) == 4
+
+    def _get_outermost_contours(self, contours, image_shape):
+
+        image = np.zeros(shape=image_shape).astype(np.uint8)
+        cv2.drawContours(image, contours, contourIdx=-1, color=255)
+
+        # Use OpenCV for heavy lifting
+        _, contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        return contours
 
 
