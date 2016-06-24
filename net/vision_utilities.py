@@ -19,6 +19,7 @@ def get_ordered_card_contour(contour):
 
     return contour
 
+
 def is_point_above_region_midpoint(contour, point):
     """
     Given a contour of a region and a point, return true if point is above
@@ -30,5 +31,18 @@ def is_point_above_region_midpoint(contour, point):
     y-coordinate, since
     """
 
-    mean_height = np.mean(contour[:, 0])
-    return point[1] < mean_height
+    mean_y_coordinate = np.mean(contour[:, 1])
+    return point[1] < mean_y_coordinate
+
+
+def is_point_to_the_left_of_region_midpoint(contour, point):
+    """
+    Given a contour of a region and a point, return true if point is to the left of
+    contours midpoint
+    :param contour: 2D numpy array of (x,y) coordinates
+    :param point: a single coordinate
+    :return: True if point is to the left of middle point of region, False otherwise.
+    """
+
+    mean_x_coordinate = np.mean(contour[:, 0])
+    return point[0] < mean_x_coordinate
