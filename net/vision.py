@@ -5,6 +5,8 @@ Detecting card candidates in images, handling image contours and like.
 import cv2
 import numpy as np
 
+import net.vision_utilities
+
 
 class CardCandidatesExtractor:
     """
@@ -101,6 +103,11 @@ class CardReconstructor:
     def get_reconstruction(self):
 
         cv2.drawContours(self.image, [self.contour], -1, (0, 255, 0), 4)
+
+        # Order contour so we know first coordinate is for top left of image and following
+        # coordinates run in clockwise order
+        ordered_contour = net.vision_utilities.get_ordered_card_contour(self.contour)
+
 
 
 
