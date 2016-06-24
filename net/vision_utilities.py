@@ -17,7 +17,32 @@ def get_ordered_card_contour(contour):
     if len(contour) != 4:
         raise ValueError("Contour length must be 4")
 
-    return contour
+    all_indices = set(range(4))
+
+    top_points_indices = set(index for index, point in enumerate(contour)
+                          if is_point_above_region_midpoint(contour, point))
+
+    bottom_points_indices = all_indices.difference(top_points_indices)
+
+    left_points_indices = set(index for index, point in enumerate(contour)
+                           if is_point_to_the_left_of_region_midpoint(contour, point))
+
+    right_points_indices = all_indices.difference(left_points_indices)
+
+    left_top_index = top_points_indices.intersection(left_points_indices).pop()
+    right_top_index = top_points_indices.intersection(right_points_indices).pop()
+
+    right_bottom_index = bottom_points_indices.intersection(right_points_indices).pop()
+    left_bottom_index = bottom_points_indices.intersection(left_points_indices).pop()
+
+    ordered_indices = [left_top_index, right_top_index, right_bottom_index, left_bottom_index]
+
+    ordered_contour = np.zeros(shape=(4,2))
+
+    for index in range(4):
+        ordered_contour[index] = contour[ordered_indices[index]]
+
+    return ordered_contour
 
 
 def is_point_above_region_midpoint(contour, point):

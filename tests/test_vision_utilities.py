@@ -62,54 +62,73 @@ def test_is_point_to_the_left_of_region_midpoint_2():
     assert False == net.vision_utilities.is_point_to_the_left_of_region_midpoint(contour, [8, 11])
 
 
-# def test_get_ordered_card_contour_throws_on_bad_input():
-#
-#     with pytest.raises(ValueError):
-#         net.vision_utilities.get_ordered_card_contour([])
-#
-#     with pytest.raises(ValueError):
-#         net.vision_utilities.get_ordered_card_contour([1, 2, 3, 4, 5])
-#
-#     try:
-#         net.vision_utilities.get_ordered_card_contour([1, 2, 3, 4])
-#     except ValueError:
-#         pytest.fail("Function failed, though shouldn't.")
+def test_get_ordered_card_contour_throws_on_bad_input():
+
+    with pytest.raises(ValueError):
+        net.vision_utilities.get_ordered_card_contour(np.zeros(shape=(5,2)))
+
+    with pytest.raises(ValueError):
+        net.vision_utilities.get_ordered_card_contour(np.zeros(shape=(3,2)))
 
 
-# def test_get_ordered_card_contour_ordered_input():
-#
-#     contour = np.array(
-#         [
-#             [0, 0],
-#             [0, 10],
-#             [10, 10],
-#             [10, 0]
-#         ]
-#     )
-#
-#     ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
-#     assert np.all(contour == ordered_contour)
-#
-#
-# def test_get_ordered_card_contour_simple_input():
-#
-#     contour = np.array(
-#         [
-#             [10, 10],
-#             [10, 0],
-#             [0, 0],
-#             [0, 10]
-#         ]
-#     )
-#
-#     correct_contour = np.array(
-#         [
-#             [0, 0],
-#             [0, 10],
-#             [10, 10],
-#             [10, 0]
-#         ]
-#     )
-#
-#     ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
-#     assert np.all(correct_contour == ordered_contour)
+def test_get_ordered_card_contour_ordered_input():
+
+    contour = np.array(
+        [
+            [0, 0],
+            [10, 0],
+            [10, 10],
+            [0, 10],
+        ]
+    )
+
+    ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
+    assert np.all(contour == ordered_contour)
+
+
+def test_get_ordered_card_contour_simple_input():
+
+    contour = np.array(
+        [
+            [10, 10],
+            [10, 0],
+            [0, 0],
+            [0, 10]
+        ]
+    )
+
+    correct_contour = np.array(
+        [
+            [0, 0],
+            [10, 0],
+            [10, 10],
+            [0, 10]
+        ]
+    )
+
+    ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
+    assert np.all(correct_contour == ordered_contour)
+
+
+def test_get_ordered_card_contour_simple_complex_input():
+
+    contour = np.array(
+        [
+            [7, 20],
+            [-3, 16],
+            [3, 8],
+            [10, 14]
+        ]
+    )
+
+    correct_contour = np.array(
+        [
+            [3, 8],
+            [10, 14],
+            [7, 20],
+            [-3, 16],
+        ]
+    )
+
+    ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
+    assert np.all(correct_contour == ordered_contour)
