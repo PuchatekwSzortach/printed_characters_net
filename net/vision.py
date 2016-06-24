@@ -100,8 +100,7 @@ class CardReconstructor:
 
     def get_reconstruction(self):
 
-        contours = [self.contour]
-        cv2.drawContours(self.image, contours, -1, (0, 255, 0), 4)
-        pass
+        cv2.drawContours(self.image, [self.contour], -1, (0, 255, 0), 4)
+
 
 
