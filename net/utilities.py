@@ -93,3 +93,20 @@ def get_training_test_data_split(data_dictionary, split_ratio):
         test_data.extend(data[training_size:])
 
     return training_data, test_data
+
+
+def get_data_batches(data, batch_size):
+    """
+    Given a data in a list, return a list of batches, each batch of size batch_size.
+    If len(data) doesn't divide evenly by batch_size, leftover items are not returned.
+    :param data: list of data items
+    :param batch_size: size or return batches
+    :return: list of batches, each batch a list of data elements
+    """
+
+    last_batch_start_index = int(len(data) / batch_size) * batch_size
+
+    batched_data = [data[index: index + batch_size] for index in
+                    range(0, last_batch_start_index, batch_size)]
+
+    return batched_data

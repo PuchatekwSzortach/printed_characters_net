@@ -36,10 +36,10 @@ def main():
 
     image_size = training_data[0][0].size
 
-    network = net.network.Net([image_size, 30, 10])
-    network.train(
-        data=vectorized_training_data, test_data=vectorized_test_data,
-        epochs=20, learning_rate=0.01)
+    network = net.network.Net(
+        layers=[image_size, 30, 10], epochs=20, learning_rate=0.01, batch_size=8)
+
+    network.train(data=vectorized_training_data, test_data=vectorized_test_data)
 
     test_accuracy = network.get_accuracy(vectorized_training_data)
     print("Test accuracy is {}".format(test_accuracy))

@@ -39,7 +39,7 @@ class Net:
     A simple neural network
     """
 
-    def __init__(self, layers):
+    def __init__(self, layers, epochs, learning_rate, batch_size):
 
         self.layers = layers
 
@@ -47,6 +47,10 @@ class Net:
 
         self.weights = [np.random.rand(nodes_out, nodes_in) / np.sqrt(nodes_in)
                         for nodes_in, nodes_out in zip(layers[:-1], layers[1:])]
+
+        self.epochs = epochs
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
 
     def feedforward(self, x):
 
@@ -59,9 +63,9 @@ class Net:
 
         return a
 
-    def train(self, data, test_data, epochs, learning_rate):
+    def train(self, data, test_data):
 
-        for epoch in range(epochs):
+        for epoch in range(self.epochs):
 
             random.shuffle(data)
 
@@ -71,7 +75,7 @@ class Net:
                 print(self.get_accuracy(test_data))
 
             for x, y in data:
-                self._update(x, y, learning_rate)
+                self._update(x, y, self.learning_rate)
 
     def _update(self, x, y, learning_rate):
 
@@ -149,3 +153,5 @@ class Net:
             is_correct.append(int(np.all(prediction_saturated == y)))
 
         return np.sum(is_correct) / len(is_correct)
+
+

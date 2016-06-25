@@ -18,3 +18,19 @@ class TestEncoder:
 
         assert "A" == encoder.decode([1, 0, 0, 0])
         assert "D" == encoder.decode([0, 0, 0, 1])
+
+
+def test_get_data_batches_exact_batches_cut():
+
+    data = list(range(12))
+    expected = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]
+
+    assert expected == net.utilities.get_data_batches(data, 3)
+
+
+def test_get_data_batches_leftover_elements():
+
+    data = list(range(12))
+    expected = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
+
+    assert expected == net.utilities.get_data_batches(data, 5)
