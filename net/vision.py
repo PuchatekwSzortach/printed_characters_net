@@ -9,6 +9,17 @@ import net.vision_utilities
 import net.constants
 
 
+class CardCandidate:
+    """
+    A very simple container for a card candidate
+    """
+
+    def __init__(self, coordinates, image):
+
+        self.coordinates = coordinates
+        self.image = image
+
+
 class CardCandidatesExtractor:
     """
     Class for extracting card candidates from an input image
@@ -27,9 +38,20 @@ class CardCandidatesExtractor:
         # OpenCV puts into contour an unnecessary dimension, so remove it
         squeezed_contours = [np.squeeze(contour) for contour in outer_contours]
 
-        for index, contour in enumerate(squeezed_contours):
-            reconstruction = CardReconstructor(image, contour, image.shape).get_reconstruction()
-            cv2.imshow("reconstruction {}".format(index), reconstruction)
+        # We need to make sure ordering within each contour is consistent
+        ordered_contours = [net.vision_utilities.get_ordered_card_contour(contour)
+                            for contour in squeezed_contours]
+
+        card_candidates = []
+
+        for contour in ordered_contours:
+
+            reconstruction = get_card_reconstruction(
+                image, contour, net.constants.straigt_card_coordinates)
+
+            card_candidates.append(CardCandidate(ordered_contours, reconstruction))
+
+        return card_candidates
 
 
     def _get_thresholded_image(self, grayscale_image):
@@ -78,46 +100,31 @@ class CardCandidatesExtractor:
         return self._get_card_like_contours(outer_contours, image_shape[0] * image_shape[1])
 
 
-class CardReconstructor:
+def get_card_reconstruction(image, contour, reconstruction_contour):
     """
-    Class for reconstructing cards (or card candidates) based on video frames and card contours
+    Given an image, a contour inside it and a reconstruction_contour,
+        map image contained inside contour to reconstruction contour.
+        Both contours are assumed to have exactly 4 points.
+    :param image: image to reconstruct from
+    :param contour: contour around area to recontruct from image
+    :param reconstruction_contour: contour of intended reconstruction
+    :return: CardReconstruction object
     """
 
-    def __init__(self, image, contour, shape):
-        """
-        Given an image, contour inside it and a shape,
-        construct an object that can return image inside a contour with given shape.
-        Return image is realigned so, as to be straight, even if provided contour is not.
-        :param image:
-        :param contour:
-        :param shape:
-        :return:
-        """
+    # Do a sanity check
+    if len(contour) != 4 or len(reconstruction_contour) != 4:
+        message = "Both contour (len = {}) and reconstruction contour (len = {}) "
+        "should have exactly 4 points.".format(len(contour), len(reconstruction_contour))
+        raise ValueError(message)
 
-        self.image = image
-        self.contour = contour
-        self.shape = shape
+    transformation_matrix = cv2.getPerspectiveTransform(
+        contour.astype(np.float32), reconstruction_contour.astype(np.float32))
 
-    def get_reconstruction(self):
+    shape = np.max(reconstruction_contour, axis=0).astype(np.int32)
 
-        # cv2.drawContours(self.image, [self.contour], -1, (0, 255, 0), 4)
+    reconstruction = cv2.warpPerspective(image, transformation_matrix, tuple(shape))
+    return reconstruction
 
-        # Order contour so we know first coordinate is for top left of image and following
-        # coordinates run in clockwise order
-        ordered_contour = net.vision_utilities.get_ordered_card_contour(
-            self.contour).astype(np.float32)
-
-        reference_coordinates = net.constants.straigt_card_coordinates.astype(np.float32)
-
-        transformation_matrix = cv2.getPerspectiveTransform(
-            ordered_contour, reference_coordinates)
-
-        size = np.max(reference_coordinates)
-
-        reconstruction = cv2.warpPerspective(
-            self.image, transformation_matrix, (size, size))
-
-        return reconstruction
 
 
 

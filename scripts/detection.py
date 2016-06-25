@@ -16,7 +16,8 @@ def main():
 
         _, frame = video_capture.read()
 
-        net.vision.CardCandidatesExtractor().get_card_candidates(frame)
+        card_candidates = net.vision.CardCandidatesExtractor().get_card_candidates(frame)
+        print("We have {} card candidates".format(len(card_candidates)))
         cv2.imshow("image", frame)
 
         key = cv2.waitKey(30)
