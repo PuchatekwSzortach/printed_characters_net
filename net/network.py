@@ -78,8 +78,9 @@ class Net:
 
             batched_data = net.utilities.get_data_batches(data, self.batch_size)
 
-            for x, y in data:
-                self._update(x, y, self.learning_rate)
+            for batch in batched_data:
+                x_batch, y_batch = net.utilities.data_tuples_to_matrices(batch)
+                self._update(x_batch, y_batch, self.learning_rate)
 
     def _update(self, x, y, learning_rate):
 
@@ -104,21 +105,21 @@ class Net:
 
         bias_gradients[-1] = error
         weights_gradients[-1] = np.dot(error, activations[-2].T)
-
-        indices = range(len(self.weights) - 2, -1, -1)
-
-        for index in indices:
-
-            error = np.dot(self.weights[index + 1].T, error) * sigmoid_prime(zs[index])
-
-            bias_gradients[index] = error
-            weights_gradients[index] = np.dot(error, activations[index].T)
-
-        self.weights = [w - (learning_rate * w_grad)
-                        for w, w_grad in zip(self.weights, weights_gradients)]
-
-        self.biases = [b - (learning_rate * b_grad)
-                        for b, b_grad in zip(self.biases, bias_gradients)]
+        #
+        # indices = range(len(self.weights) - 2, -1, -1)
+        #
+        # for index in indices:
+        #
+        #     error = np.dot(self.weights[index + 1].T, error) * sigmoid_prime(zs[index])
+        #
+        #     bias_gradients[index] = error
+        #     weights_gradients[index] = np.dot(error, activations[index].T)
+        #
+        # self.weights = [w - (learning_rate * w_grad)
+        #                 for w, w_grad in zip(self.weights, weights_gradients)]
+        #
+        # self.biases = [b - (learning_rate * b_grad)
+        #                 for b, b_grad in zip(self.biases, bias_gradients)]
 
     def _get_cost(self, y, prediction):
         """
