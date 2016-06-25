@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 import net.vision_utilities
+import net.constants
 
 
 class CardCandidatesExtractor:
@@ -26,8 +27,9 @@ class CardCandidatesExtractor:
         # OpenCV puts into contour an unnecessary dimension, so remove it
         squeezed_contours = [np.squeeze(contour) for contour in outer_contours]
 
-        for contour in squeezed_contours:
-            CardReconstructor(image, contour, image.shape).get_reconstruction()
+        for index, contour in enumerate(squeezed_contours):
+            reconstruction = CardReconstructor(image, contour, image.shape).get_reconstruction()
+            cv2.imshow("reconstruction {}".format(index), reconstruction)
 
 
     def _get_thresholded_image(self, grayscale_image):
@@ -96,17 +98,27 @@ class CardReconstructor:
         self.contour = contour
         self.shape = shape
 
-        print("Contour")
-        print(contour)
-        print(contour.shape)
-
     def get_reconstruction(self):
 
-        cv2.drawContours(self.image, [self.contour], -1, (0, 255, 0), 4)
+        # cv2.drawContours(self.image, [self.contour], -1, (0, 255, 0), 4)
 
         # Order contour so we know first coordinate is for top left of image and following
         # coordinates run in clockwise order
-        ordered_contour = net.vision_utilities.get_ordered_card_contour(self.contour)
+        ordered_contour = net.vision_utilities.get_ordered_card_contour(
+            self.contour).astype(np.float32)
+
+        reference_coordinates = net.constants.straigt_card_coordinates.astype(np.float32)
+
+        transformation_matrix = cv2.getPerspectiveTransform(
+            ordered_contour, reference_coordinates)
+
+        size = np.max(reference_coordinates)
+
+        reconstruction = cv2.warpPerspective(
+            self.image, transformation_matrix, (size, size))
+
+        return reconstruction
+
 
 
 
