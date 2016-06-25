@@ -37,7 +37,7 @@ def main():
     image_size = training_data[0][0].size
 
     network = net.network.Net(
-        layers=[image_size, 30, 10], epochs=20, learning_rate=0.01, batch_size=4)
+        layers=[image_size, 30, 10], epochs=20, learning_rate=0.01, batch_size=8)
 
     network.train(data=vectorized_training_data, test_data=vectorized_test_data)
 

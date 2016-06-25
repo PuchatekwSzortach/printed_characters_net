@@ -4,6 +4,7 @@ Module with network code
 import warnings
 import numpy as np
 import random
+import time
 
 import net.utilities
 
@@ -84,7 +85,6 @@ class Net:
 
     def _update(self, x, y, learning_rate):
 
-
         zs = []
         activations = [x]
 
@@ -103,23 +103,23 @@ class Net:
 
         error = self._get_output_layer_error(y, activations[-1])
 
-        bias_gradients[-1] = error
-        weights_gradients[-1] = np.dot(error, activations[-2].T)
-        #
-        # indices = range(len(self.weights) - 2, -1, -1)
-        #
-        # for index in indices:
-        #
-        #     error = np.dot(self.weights[index + 1].T, error) * sigmoid_prime(zs[index])
-        #
-        #     bias_gradients[index] = error
-        #     weights_gradients[index] = np.dot(error, activations[index].T)
-        #
-        # self.weights = [w - (learning_rate * w_grad)
-        #                 for w, w_grad in zip(self.weights, weights_gradients)]
-        #
-        # self.biases = [b - (learning_rate * b_grad)
-        #                 for b, b_grad in zip(self.biases, bias_gradients)]
+        bias_gradients[-1] = np.mean(error, axis=1).reshape(error.shape[0], 1)
+        weights_gradients[-1] = np.dot(error, activations[-2].T) / self.batch_size
+
+        indices = range(len(self.weights) - 2, -1, -1)
+
+        for index in indices:
+
+            error = np.dot(self.weights[index + 1].T, error) * sigmoid_prime(zs[index])
+
+            bias_gradients[index] = np.mean(error, axis=1).reshape(error.shape[0], 1)
+            weights_gradients[index] = np.dot(error, activations[index].T) / self.batch_size
+
+        self.weights = [w - (learning_rate * w_grad)
+                        for w, w_grad in zip(self.weights, weights_gradients)]
+
+        self.biases = [b - (learning_rate * b_grad)
+                        for b, b_grad in zip(self.biases, bias_gradients)]
 
     def _get_cost(self, y, prediction):
         """
