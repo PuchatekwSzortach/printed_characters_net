@@ -4,6 +4,9 @@ Module with network code
 import warnings
 import numpy as np
 import random
+import time
+
+import net.utilities
 
 # warnings.filterwarnings('error')
 
@@ -39,7 +42,7 @@ class Net:
     A simple neural network
     """
 
-    def __init__(self, layers):
+    def __init__(self, layers, epochs, learning_rate, batch_size):
 
         self.layers = layers
 
@@ -47,6 +50,10 @@ class Net:
 
         self.weights = [np.random.rand(nodes_out, nodes_in) / np.sqrt(nodes_in)
                         for nodes_in, nodes_out in zip(layers[:-1], layers[1:])]
+
+        self.epochs = epochs
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
 
     def feedforward(self, x):
 
@@ -59,9 +66,9 @@ class Net:
 
         return a
 
-    def train(self, data, test_data, epochs, learning_rate):
+    def train(self, data, test_data):
 
-        for epoch in range(epochs):
+        for epoch in range(self.epochs):
 
             random.shuffle(data)
 
@@ -70,8 +77,11 @@ class Net:
                 print("Epoch {}".format(epoch))
                 print(self.get_accuracy(test_data))
 
-            for x, y in data:
-                self._update(x, y, learning_rate)
+            batched_data = net.utilities.get_data_batches(data, self.batch_size)
+
+            for batch in batched_data:
+                x_batch, y_batch = net.utilities.data_tuples_to_matrices(batch)
+                self._update(x_batch, y_batch, self.learning_rate)
 
     def _update(self, x, y, learning_rate):
 
@@ -93,8 +103,8 @@ class Net:
 
         error = self._get_output_layer_error(y, activations[-1])
 
-        bias_gradients[-1] = error
-        weights_gradients[-1] = np.dot(error, activations[-2].T)
+        bias_gradients[-1] = np.mean(error, axis=1).reshape(error.shape[0], 1)
+        weights_gradients[-1] = np.dot(error, activations[-2].T) / self.batch_size
 
         indices = range(len(self.weights) - 2, -1, -1)
 
@@ -102,8 +112,8 @@ class Net:
 
             error = np.dot(self.weights[index + 1].T, error) * sigmoid_prime(zs[index])
 
-            bias_gradients[index] = error
-            weights_gradients[index] = np.dot(error, activations[index].T)
+            bias_gradients[index] = np.mean(error, axis=1).reshape(error.shape[0], 1)
+            weights_gradients[index] = np.dot(error, activations[index].T) / self.batch_size
 
         self.weights = [w - (learning_rate * w_grad)
                         for w, w_grad in zip(self.weights, weights_gradients)]
@@ -149,3 +159,5 @@ class Net:
             is_correct.append(int(np.all(prediction_saturated == y)))
 
         return np.sum(is_correct) / len(is_correct)
+
+

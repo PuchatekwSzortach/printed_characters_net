@@ -5,7 +5,6 @@ Detecting card candidates in images, handling image contours and like.
 import cv2
 import numpy as np
 
-import net.vision_utilities
 import net.constants
 
 
