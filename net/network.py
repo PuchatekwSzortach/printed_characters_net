@@ -5,6 +5,8 @@ import warnings
 import numpy as np
 import random
 
+import net.utilities
+
 # warnings.filterwarnings('error')
 
 def sigmoid(z):
@@ -74,10 +76,13 @@ class Net:
                 print("Epoch {}".format(epoch))
                 print(self.get_accuracy(test_data))
 
+            batched_data = net.utilities.get_data_batches(data, self.batch_size)
+
             for x, y in data:
                 self._update(x, y, self.learning_rate)
 
     def _update(self, x, y, learning_rate):
+
 
         zs = []
         activations = [x]

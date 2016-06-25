@@ -110,3 +110,38 @@ def get_data_batches(data, batch_size):
                     range(0, last_batch_start_index, batch_size)]
 
     return batched_data
+
+
+def data_tuples_to_matrices(data):
+    """
+    Given a list of tuples, where each tuple is made up of numpy column vectors,
+    convert them to matrices, such that corresponding elements from each tuple are
+    laid out in matrices columns-wise.
+    E.g. if data is a 5-elements list of 10x1 and 20x1 tuples, the result is a single
+    tuple of 10x5 and 20x5 matrices.
+    :param data: a list of tuples. Each tuple contains numpy column vectors
+    :return: a list of 2D numpy arrays.
+    """
+
+    data_length = len(data)
+    matrices_count = len(data[0])
+
+    matrices = []
+
+    for matrix_index in range(matrices_count):
+
+        # Our reference for matrix size and type
+        vector_length = data[0][matrix_index].shape[0]
+        vector_type = data[0][matrix_index].dtype
+
+        # Allocate matrix
+        matrix = np.zeros(shape=[vector_length, data_length]).astype(vector_type)
+
+        for data_index in range(data_length):
+
+            matrix[:, data_index] = data[data_index][matrix_index].reshape([vector_length])
+
+        matrices.append(matrix)
+
+    return matrices
+

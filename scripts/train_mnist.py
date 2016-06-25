@@ -34,15 +34,24 @@ def main():
     vectorized_training_data = vectorize_mnist(training_data)
     vectorized_test_data = vectorize_mnist(test_data)
 
-    image_size = training_data[0][0].size
+    print("Single data elements")
+    print(type(vectorized_training_data[0]))
+    print("First element")
+    print(vectorized_training_data[0][0].shape)
+    print("Second element")
+    print(vectorized_training_data[0][1].shape)
 
-    network = net.network.Net(
-        layers=[image_size, 30, 10], epochs=20, learning_rate=0.01, batch_size=8)
 
-    network.train(data=vectorized_training_data, test_data=vectorized_test_data)
-
-    test_accuracy = network.get_accuracy(vectorized_training_data)
-    print("Test accuracy is {}".format(test_accuracy))
+    #
+    # image_size = training_data[0][0].size
+    #
+    # network = net.network.Net(
+    #     layers=[image_size, 30, 10], epochs=20, learning_rate=0.01, batch_size=8)
+    #
+    # network.train(data=vectorized_training_data, test_data=vectorized_test_data)
+    #
+    # test_accuracy = network.get_accuracy(vectorized_training_data)
+    # print("Test accuracy is {}".format(test_accuracy))
 
 
 if __name__ == "__main__":
