@@ -27,20 +27,16 @@ class CardCandidatesExtractor:
 
     def get_card_candidates(self, image):
 
-        grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY, cv2.THRESH_BINARY)
-        thresholded = self._get_thresholded_image(grayscale)
 
-        _, contours, _ = cv2.findContours(thresholded.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-        card_contours = self._get_card_like_contours(contours, image.shape[0] * image.shape[1])
-
-        outer_contours = self._get_outermost_contours(card_contours, thresholded.shape)
+        image_contours = self._get_image_contours(image)
+        card_contours = self._get_card_like_contours(image_contours, image.shape[0] * image.shape[1])
+        outer_contours = self._get_outermost_contours(card_contours, image.shape)
 
         # OpenCV puts into contour an unnecessary dimension, so remove it
         squeezed_contours = [np.squeeze(contour) for contour in outer_contours]
 
         # We need to make sure ordering within each contour is consistent
-        ordered_contours = [net.vision_utilities.get_ordered_card_contour(contour)
-                            for contour in squeezed_contours]
+        ordered_contours = [get_ordered_card_contour(contour) for contour in squeezed_contours]
 
         card_candidates = []
 
@@ -53,6 +49,13 @@ class CardCandidatesExtractor:
 
         return card_candidates
 
+    def _get_image_contours(self, image):
+
+        grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY, cv2.THRESH_BINARY)
+        thresholded = self._get_thresholded_image(grayscale)
+
+        _, contours, _ = cv2.findContours(thresholded.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+        return contours
 
     def _get_thresholded_image(self, grayscale_image):
 
@@ -69,28 +72,13 @@ class CardCandidatesExtractor:
 
         card_like_contours = [
             contour for contour in simplified_contours
-            if self._is_contour_card_like(contour, image_size)]
+            if is_contour_card_like(contour, image_size)]
 
         return card_like_contours
 
-    def _is_contour_card_like(self, contour, image_size):
-
-        max_area = 0.3 * image_size
-        min_area = 0.001 * image_size
-
-        contour_area = cv2.contourArea(contour)
-
-        # Return contours that are within acceptable size
-        if contour_area < min_area or max_area < contour_area:
-            return False
-
-        # And made of only four points - since our frames should be represented by
-        # four points
-        return len(contour) == 4
-
     def _get_outermost_contours(self, contours, image_shape):
 
-        image = np.zeros(shape=image_shape).astype(np.uint8)
+        image = np.zeros(shape=(image_shape[0], image_shape[1])).astype(np.uint8)
         cv2.drawContours(image, contours, contourIdx=-1, color=255)
 
         # Use OpenCV for heavy lifting
@@ -126,7 +114,58 @@ def get_card_reconstruction(image, contour, reconstruction_contour):
     return reconstruction
 
 
+def get_ordered_card_contour(contour):
+    """
+    Given a 4-points contour, return a version that has left top point as first element,
+    and then proceeds clockwise.
+    :param contour: A 4-points, roughly rectangular contour that represents a card candidate
+    :return: contour with points rotated so that first contour is top left, and following
+    contours are in clockwise-order
+    """
+
+    # A sanity check
+    if len(contour) != 4:
+        raise ValueError("Contour length must be 4")
+
+    ordered_contour = np.zeros(shape=(4,2))
+
+    # Sum coordinates for each point
+    sums = np.sum(contour, axis=1)
+
+    # Top left contour will have smallest coordinates sum,
+    # right bottom contour will have largest coordinates sum
+    ordered_contour[0] = contour[np.argmin(sums)]
+    ordered_contour[2] = contour[np.argmax(sums)]
+
+    differences = np.diff(contour, axis=1)
+
+    # Top right contour will have smallest coordinates difference,
+    # bottom left contour will have largest coordinates difference
+    ordered_contour[1] = contour[np.argmin(differences)]
+    ordered_contour[3] = contour[np.argmax(differences)]
+
+    return ordered_contour
 
 
+def is_contour_card_like(contour, image_size):
+    """
+    Given a contour, judge whether it is like to represent a card.
+    The criteria are that it is roughly rectangular and has a sensible area w.r.t.
+    total image size
+    :param contour: contour to judge
+    :param image_size: number of pixels in image
+    :return: Bool
+    """
 
+    max_area = 0.3 * image_size
+    min_area = 0.001 * image_size
 
+    contour_area = cv2.contourArea(contour)
+
+    # Return contours that are within acceptable size
+    if contour_area < min_area or max_area < contour_area:
+        return False
+
+    # And made of only four points - since our frames should be represented by
+    # four points
+    return len(contour) == 4

@@ -4,15 +4,15 @@ Tests for vision_utilities module
 import numpy as np
 import pytest
 
-import net.vision_utilities
+import net.vision
 
 def test_get_ordered_card_contour_throws_on_bad_input():
 
     with pytest.raises(ValueError):
-        net.vision_utilities.get_ordered_card_contour(np.zeros(shape=(5,2)))
+        net.vision.get_ordered_card_contour(np.zeros(shape=(5,2)))
 
     with pytest.raises(ValueError):
-        net.vision_utilities.get_ordered_card_contour(np.zeros(shape=(3,2)))
+        net.vision.get_ordered_card_contour(np.zeros(shape=(3,2)))
 
 
 def test_get_ordered_card_contour_ordered_input():
@@ -26,7 +26,7 @@ def test_get_ordered_card_contour_ordered_input():
         ]
     )
 
-    ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
+    ordered_contour = net.vision.get_ordered_card_contour(contour)
     assert np.all(contour == ordered_contour)
 
 
@@ -50,7 +50,7 @@ def test_get_ordered_card_contour_simple_input():
         ]
     )
 
-    ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
+    ordered_contour = net.vision.get_ordered_card_contour(contour)
     assert np.all(correct_contour == ordered_contour)
 
 
@@ -74,5 +74,5 @@ def test_get_ordered_card_contour_simple_complex_input():
         ]
     )
 
-    ordered_contour = net.vision_utilities.get_ordered_card_contour(contour)
+    ordered_contour = net.vision.get_ordered_card_contour(contour)
     assert np.all(correct_contour == ordered_contour)
