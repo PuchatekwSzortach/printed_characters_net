@@ -7,7 +7,7 @@ The idea is to be able to detect in real time video characters like below:
 
 ![k](./readme/k.jpg) ![u](./readme/u.jpg) ![ba](./readme/ba.jpg) ![4](./readme/4.jpg) ![gaku](./readme/gaku.jpg)
 
-Current network design is capable of learning to detect over 250 characters (Latin alphabet, digits, hiragana, katanaka and Jouyou Level 1 kanji) with about ~95% accuracy.
+Current network design is capable of learning to detect over 250 characters (Latin alphabet, digits, hiragana, katanaka and Jouyou Level 1 kanji) with about ~95% accuracy in ~10mins of training on MacBook Pro 2014. Another two hours of training can raise this to ~98%.
 
 The core logic of the project is contained in scripts directory, which consists of following programs:
 - `create_templates.py` - creates plain images of characters we want to recognize
