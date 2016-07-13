@@ -5,7 +5,7 @@ This project is a work in progress. Currently it's about ~80% complete.
 `Printed characters net` is a project that demonstrates use of neural networks for characters recognition.
 The idea is to be able to detect in real time video characters like below:
 
-![k](./readme/k.jpg) ![u](./readme/u.jpg) ![ba](./readme/b.jpg) ![4](./readme/a.jpg) ![gaku](./readme/gaku.jpg)
+![k](./readme/k.jpg) ![u](./readme/u.jpg) ![ba](./readme/ba.jpg) ![4](./readme/4.jpg) ![gaku](./readme/gaku.jpg)
 
 Current network design is capable of learning to detect over 250 characters (Latin alphabet, digits, hiragana, katanaka and Jouyou Level 1 kanji) with about ~95% accuracy.
 
