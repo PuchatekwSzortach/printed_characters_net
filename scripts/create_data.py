@@ -12,6 +12,7 @@ import numpy as np
 import cv2
 import glob
 import os.path
+import multiprocessing
 
 import tqdm
 
@@ -67,8 +68,15 @@ def main():
     base_path = "../../data/characters/data/"
     images_count = 1000
 
-    for template_path in tqdm.tqdm(templates_paths):
-        create_template_data(template_path, base_path, transformations, images_count)
+    with multiprocessing.Pool() as pool:
+
+        # Enqueue jobs using processing pool
+        results = [pool.apply_async(create_template_data, (path, base_path, transformations, images_count))
+                   for path in templates_paths]
+
+        # Wrap waiting on results into a nifty progress bar
+        for result in tqdm.tqdm(results):
+            result.get()
 
 
 if __name__ == "__main__":

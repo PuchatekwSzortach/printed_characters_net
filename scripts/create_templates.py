@@ -11,6 +11,8 @@ import net.data
 import string
 import os
 
+import tqdm
+
 def get_hiragana_set():
 
     hiragana = {chr(index) for index in range(0x3042, 0x3090)}
@@ -49,7 +51,7 @@ def main():
     base_path = "../../data/characters/templates/"
     os.makedirs(base_path, exist_ok=True)
 
-    for character in characters:
+    for character in tqdm.tqdm(characters):
 
         image = templates_maker.create_template(character)
         cv2.imwrite(base_path + character + ".jpg", image)
