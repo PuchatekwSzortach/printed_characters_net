@@ -79,8 +79,7 @@ def main():
     temporary_dir = "/tmp/templates/"
 
     # Make directory for temporary images if it doesn't already exist
-    if not os.path.exists(temporary_dir):
-        os.makedirs(temporary_dir)
+    os.makedirs(temporary_dir, exist_ok=True)
 
     # Write bordered images to temporary dir
     for path, template in zip(paths, bordered_templates):

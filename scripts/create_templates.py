@@ -47,7 +47,7 @@ def main():
     templates_maker = net.data.TemplatesMaker(font, (32, 32))
 
     base_path = "../../data/characters/templates/"
-    os.makedirs(base_path)
+    os.makedirs(base_path, exist_ok=True)
 
     for character in characters:
 

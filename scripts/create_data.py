@@ -12,6 +12,8 @@ import numpy as np
 import cv2
 import glob
 import os.path
+import multiprocessing
+import itertools
 
 import net.transformations
 
@@ -24,9 +26,38 @@ def get_file_name(template_name, index_number):
     return stem + file_name + ".jpg"
 
 
+def create_template_data(template_path, base_path, transformations, images_count):
+
+    template_name = os.path.split(template_path)[1].split(".")[0]
+
+    directory = os.path.join(base_path, template_name)
+    os.makedirs(directory, exist_ok=True)
+
+    image = cv2.cvtColor(cv2.imread(template_path), cv2.COLOR_RGB2GRAY)
+
+    # A series of random integers representing number of transformations to
+    # be applied for each image
+    transformations_counts = np.random.randint(1, len(transformations.keys()) + 1, size=images_count)
+
+    for image_index in range(images_count):
+
+        # Get number of transformations, then get actual transformations in random order
+        applied_transformations = random.sample(
+            transformations.keys(), transformations_counts[image_index])
+
+        transformed_image = image.copy()
+
+        for key in applied_transformations:
+
+            transformed_image = transformations[key](transformed_image)
+            cv2.imwrite(get_file_name(template_name, image_index), transformed_image)
+
+    print(template_name + " done")
+
+
 def main():
 
-    tranformations = {
+    transformations = {
         "shift": net.transformations.shift_image,
         "rotation": net.transformations.rotate_image,
         "intensity_change": net.transformations.change_intensity,
@@ -34,34 +65,16 @@ def main():
         "perspective_transformation": net.transformations.apply_perspective_transformation,
     }
 
-    templates = glob.glob("../../data/characters/templates/*.jpg")
+    templates_paths = glob.glob("../../data/characters/templates/*.jpg")
+    base_path = "../../data/characters/data/"
+    images_count = 1000
 
-    for template in templates:
+    arguments = zip(
+            templates_paths, itertools.repeat(base_path),
+            itertools.repeat(transformations), itertools.repeat(images_count))
 
-        template_name = os.path.split(template)[1].split(".")[0]
-
-        directory = "../../data/characters/data/" + template_name
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        image = cv2.cvtColor(cv2.imread(template), cv2.COLOR_RGB2GRAY)
-
-        templates_count = 1000
-        transformations_counts = np.random.randint(1, len(tranformations.keys()) + 1, size=templates_count)
-
-        for index in range(templates_count):
-
-            # Get number of transformations, then get actual transformations in random order
-            applied_transformations = random.sample(
-                tranformations.keys(), transformations_counts[index])
-
-            transformed_image = image.copy()
-
-            for key in applied_transformations:
-
-                transformed_image = tranformations[key](transformed_image)
-                cv2.imwrite(get_file_name(template_name, index), transformed_image)
+    with multiprocessing.Pool() as pool:
+        pool.starmap(create_template_data, arguments)
 
 
 if __name__ == "__main__":
