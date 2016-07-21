@@ -12,8 +12,8 @@ import numpy as np
 import cv2
 import glob
 import os.path
-import multiprocessing
-import itertools
+
+import tqdm
 
 import net.transformations
 
@@ -52,8 +52,6 @@ def create_template_data(template_path, base_path, transformations, images_count
             transformed_image = transformations[key](transformed_image)
             cv2.imwrite(get_file_name(template_name, image_index), transformed_image)
 
-    print(template_name + " done")
-
 
 def main():
 
@@ -69,12 +67,8 @@ def main():
     base_path = "../../data/characters/data/"
     images_count = 1000
 
-    arguments = zip(
-            templates_paths, itertools.repeat(base_path),
-            itertools.repeat(transformations), itertools.repeat(images_count))
-
-    with multiprocessing.Pool() as pool:
-        pool.starmap(create_template_data, arguments)
+    for template_path in tqdm.tqdm(templates_paths):
+        create_template_data(template_path, base_path, transformations, images_count)
 
 
 if __name__ == "__main__":
