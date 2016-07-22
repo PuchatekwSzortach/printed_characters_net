@@ -5,6 +5,8 @@ Various utilities
 import numpy as np
 import cv2
 import glob
+import tqdm
+import multiprocessing
 
 class Encoder:
     """
@@ -67,7 +69,18 @@ def get_data_dictionary(base_path, labels):
     :return: A dictionary of form {label : images list}
     """
 
-    return {label : get_images(base_path + label + "/") for label in labels}
+    print("Loading data")
+    with multiprocessing.Pool() as pool:
+
+        # Get a list of futures queued on the pool
+        results = [pool.apply_async(get_images, (base_path + label + "/",)) for label in labels]
+
+        # Build a results dictionary using labels as key and results of futures, which are
+        # evaluated to lists of data for that label, as values. Wrap iteration over result in tqdm
+        # to add a printed progress bar to terminal output
+        data_dictionary = {label: result.get() for label, result in zip(labels, tqdm.tqdm(results))}
+
+    return data_dictionary
 
 
 def get_training_test_data_split(data_dictionary, split_ratio):

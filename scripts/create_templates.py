@@ -13,6 +13,7 @@ import os
 
 import tqdm
 
+
 def get_hiragana_set():
 
     hiragana = {chr(index) for index in range(0x3042, 0x3090)}
@@ -20,6 +21,7 @@ def get_hiragana_set():
                  chr(0x3085), chr(0x3087), chr(0x308E)}
 
     return sorted(list(hiragana.difference(blacklist)))
+
 
 def get_katakana_set():
 
@@ -29,15 +31,18 @@ def get_katakana_set():
 
     return sorted(list(katakana.difference(blacklist)))
 
+
 def get_digits_set():
 
     return [str(index) for index in range(0, 10)]
+
 
 def get_kanji_set():
 
     with open("../../data/characters/kanji.txt") as file:
         content = file.read().split(" ")
         return content
+
 
 def main():
 

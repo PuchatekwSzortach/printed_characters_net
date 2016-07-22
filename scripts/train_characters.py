@@ -9,6 +9,7 @@ import numpy as np
 import net.network
 import random
 
+
 def get_characters_list(data_path):
     """
     Give a path which contains directories with data for each character,
@@ -21,6 +22,7 @@ def get_characters_list(data_path):
     # First result contains parent directory itself, so need to discard it.
     # Also full paths are given and we want only basenames
     return [os.path.basename(result[0]) for result in os.walk(data_path)][1:]
+
 
 def transform_data(data, encoder):
     """
