@@ -76,9 +76,9 @@ def get_data_dictionary(base_path, labels):
         results = [pool.apply_async(get_images, (base_path + label + "/",)) for label in labels]
 
         # Build a results dictionary using labels as key and results of futures, which are
-        # evaluated to lists of data for that label, as values. Wrap iteration over result in tqdm
+        # evaluated to lists of data for that label, as values. Wrap iteration over labels in tqdm
         # to add a printed progress bar to terminal output
-        data_dictionary = {label: result.get() for label, result in zip(labels, tqdm.tqdm(results))}
+        data_dictionary = {label: result.get() for label, result in zip(tqdm.tqdm(labels), results)}
 
     return data_dictionary
 
