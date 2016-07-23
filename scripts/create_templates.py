@@ -11,6 +11,7 @@ import net.data
 import string
 import os
 import re
+import warnings
 
 import tqdm
 
@@ -40,10 +41,16 @@ def get_digits_set():
 
 def get_kanji_set():
 
-    with open("../../data/characters/kanji.txt") as file:
+    try:
 
-        content = file.read()
-        return re.findall(r'\w', content)
+        with open("../../data/characters/kanji.txt") as file:
+
+            content = file.read()
+            return re.findall(r'\w', content)
+
+    except FileNotFoundError:
+        warnings.warn("Kanji file not found. No kanji will be included in templates.")
+        return []
 
 
 def main():
