@@ -10,6 +10,7 @@ import cv2
 import net.data
 import string
 import os
+import re
 
 import tqdm
 
@@ -40,15 +41,16 @@ def get_digits_set():
 def get_kanji_set():
 
     with open("../../data/characters/kanji.txt") as file:
-        content = file.read().split(" ")
-        return content
+
+        content = file.read()
+        return re.findall(r'\w', content)
 
 
 def main():
 
     font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=100)
 
-    characters = list(string.ascii_uppercase) + get_hiragana_set() + \
+    characters = list(string.ascii_uppercase) + get_hiragana_set() +\
                  get_katakana_set() + get_digits_set() + get_kanji_set()
 
     templates_maker = net.data.TemplatesMaker(font, (32, 32))
