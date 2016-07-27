@@ -17,7 +17,7 @@ The core logic of the project is contained in scripts directory, which consists 
 - `train_characters.py` - script for training neural network to detect templates
 - `detection.py` - detect printed templates in real time video stream
 
-Notes on data size: You can control amount of artificial data created with constants defined in `create_data.py`. Given ~250 labels I recommend going for ~400 images per label - this should let you create all data and train the classifier to ~95% accuracy in under 10mins on a decent machine.
+Notes on data size: You can control amount of artificial data created with constants defined in `create_data.py`. Given ~250 labels I recommend going for ~400 images per label - this should let you create all data and train the classifier to ~95% accuracy in under 15mins on an decent machine.
 
 TODO:
 - add a softmax output layer to neural network code. Current code uses a plain sigmoid outputs layer and it would be nice to give a confidence of each prediction. The forward step isn't of course any difficult, but I need to yet figure out what the correct cost derivative is for softmax layer.
