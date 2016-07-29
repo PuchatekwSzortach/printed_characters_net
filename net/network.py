@@ -55,12 +55,20 @@ def softmax(z):
         exit(0)
 
 
+def relu(z):
+    return z * (z > 0)
+
+
+def relu_prime(z):
+    return (z > 0).astype(np.float32)
+
+
 class Net:
     """
     A simple neural network
     """
 
-    def __init__(self, layers, epochs, learning_rate, batch_size):
+    def __init__(self, layers, epochs, learning_rate, regularization_coefficient, batch_size):
 
         self.layers = layers
 
@@ -71,6 +79,7 @@ class Net:
 
         self.epochs = epochs
         self.learning_rate = learning_rate
+        self.regularization_coefficient = regularization_coefficient
         self.batch_size = batch_size
 
     def feedforward(self, x):
@@ -83,7 +92,7 @@ class Net:
             z = np.dot(w, a) + b
             zs.append(z)
 
-            a = sigmoid(z)
+            a = relu(z)
 
         # Use softmax output
         return softmax(zs[-1])
@@ -117,10 +126,7 @@ class Net:
             z = np.dot(w, a) + b
             zs.append(z)
 
-            a = sigmoid(z)
-
-            # Drop out
-            a = a * np.random.binomial(n=1, p=0.5, size=a.shape)
+            a = relu(z)
             activations.append(a)
 
         # Use softmax output
@@ -138,10 +144,13 @@ class Net:
 
         for index in indices:
 
-            error = np.dot(self.weights[index + 1].T, error) * sigmoid_prime(zs[index])
+            error = np.dot(self.weights[index + 1].T, error) * relu_prime(zs[index])
 
             bias_gradients[index] = np.mean(error, axis=1).reshape(error.shape[0], 1)
-            weights_gradients[index] = np.dot(error, activations[index].T) / self.batch_size
+
+            weights_gradients[index] = \
+                np.dot(error, activations[index].T) / self.batch_size + \
+                (self.regularization_coefficient * self.weights[index] / self.batch_size)
 
         self.weights = [w - (learning_rate * w_grad)
                         for w, w_grad in zip(self.weights, weights_gradients)]
@@ -157,7 +166,13 @@ class Net:
         :return:
         """
         index = np.argmax(y)
-        return -np.log(prediction[index] + 1e-10)
+        basic_cost = -np.log(prediction[index] + 1e-10)
+
+        squared_weights = [w * w for w in self.weights]
+        squared_weights_sum = np.sum([np.sum(sw) for sw in squared_weights])
+        regularization_cost = (self.regularization_coefficient * squared_weights_sum) / (2 * self.batch_size)
+
+        return basic_cost + regularization_cost
 
     def _get_output_layer_error(self, y, prediction):
         """

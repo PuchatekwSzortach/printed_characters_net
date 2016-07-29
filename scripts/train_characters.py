@@ -73,7 +73,8 @@ def main():
     labels_size = len(characters)
 
     network = net.network.Net(
-        layers=[image_size, 100, labels_size], epochs=100, learning_rate=0.01, batch_size=4)
+            layers=[image_size, 100, labels_size], epochs=100,
+            learning_rate=0.01, regularization_coefficient=0.01, batch_size=4)
 
     network.train(data=training_data, test_data=test_data)
 
