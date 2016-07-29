@@ -118,6 +118,9 @@ class Net:
             zs.append(z)
 
             a = sigmoid(z)
+
+            # Drop out
+            a = a * np.random.binomial(n=1, p=0.5, size=a.shape)
             activations.append(a)
 
         # Use softmax output
