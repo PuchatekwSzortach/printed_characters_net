@@ -66,7 +66,7 @@ def main():
 
     templates_paths = glob.glob("../../data/characters/templates/*.jpg")
     base_path = "../../data/characters/data/"
-    images_count = 400
+    images_count = 250
 
     with multiprocessing.Pool() as pool:
 

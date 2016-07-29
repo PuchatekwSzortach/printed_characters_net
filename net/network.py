@@ -8,7 +8,8 @@ import time
 
 import net.utilities
 
-# warnings.filterwarnings('error')
+warnings.filterwarnings('error')
+
 
 def sigmoid(z):
 
@@ -32,9 +33,26 @@ def sigmoid(z):
         print(output)
         exit(0)
 
+
 def sigmoid_prime(z):
 
     return sigmoid(z) * (1 - sigmoid(z))
+
+
+def softmax(z):
+
+    try:
+        # Clip values to sensible range for numerical stability
+        clipped = np.clip(z, -50, 50)
+        return np.exp(clipped) / np.sum(np.exp(clipped), axis=0)
+
+    except RuntimeWarning as problem:
+
+        print("Runtime warning occurred in softmax")
+        print(problem)
+        print("For input")
+        print(z)
+        exit(0)
 
 
 class Net:
@@ -58,13 +76,17 @@ class Net:
     def feedforward(self, x):
 
         a = x.copy()
+        zs = []
 
         for w, b in zip(self.weights, self.biases):
 
             z = np.dot(w, a) + b
+            zs.append(z)
+
             a = sigmoid(z)
 
-        return a
+        # Use softmax output
+        return softmax(zs[-1])
 
     def train(self, data, test_data):
 
@@ -79,7 +101,7 @@ class Net:
 
             batched_data = net.utilities.get_data_batches(data, self.batch_size)
 
-            for batch in batched_data:
+            for index, batch in enumerate(batched_data):
                 x_batch, y_batch = net.utilities.data_tuples_to_matrices(batch)
                 self._update(x_batch, y_batch, self.learning_rate)
 
@@ -97,6 +119,9 @@ class Net:
 
             a = sigmoid(z)
             activations.append(a)
+
+        # Use softmax output
+        activations[-1] = softmax(zs[-1])
 
         bias_gradients = [None] * len(self.biases)
         weights_gradients = [None] * len(self.weights)
@@ -119,7 +144,7 @@ class Net:
                         for w, w_grad in zip(self.weights, weights_gradients)]
 
         self.biases = [b - (learning_rate * b_grad)
-                        for b, b_grad in zip(self.biases, bias_gradients)]
+                       for b, b_grad in zip(self.biases, bias_gradients)]
 
     def _get_cost(self, y, prediction):
         """
@@ -128,12 +153,8 @@ class Net:
         :param prediction:
         :return:
         """
-
-        a = y * np.nan_to_num(np.log(prediction))
-        b = (1 - y) * np.nan_to_num(np.log(1 - prediction))
-
-        cost = -(a + b)
-        return cost
+        index = np.argmax(y)
+        return -np.log(prediction[index] + 1e-10)
 
     def _get_output_layer_error(self, y, prediction):
         """
@@ -145,7 +166,6 @@ class Net:
         return prediction - y
 
     def get_accuracy(self, data):
-
 
         is_correct = []
 
