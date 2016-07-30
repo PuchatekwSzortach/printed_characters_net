@@ -15,15 +15,16 @@ def main():
     characters = net.characters.get_characters_list(base_data_path)
     data_dictionary = net.utilities.get_data_dictionary(base_data_path, characters)
 
-    _, test_data = net.utilities.get_training_test_data_split(data_dictionary, 0.8)
+    training_data, test_data = net.utilities.get_training_test_data_split(data_dictionary, 0.8)
 
     encoder = net.utilities.Encoder(characters)
+    training_data = net.characters.transform_data(training_data, encoder)
     test_data = net.characters.transform_data(test_data, encoder)
 
     network = net.network.Net.from_file("./results/characters_net.json")
     debugger = net.network.NetworkDebugger(network, encoder)
 
-    mistakes = debugger.get_mistakes(test_data)
+    mistakes = debugger.get_mistakes(training_data + test_data)
 
     for key, value in mistakes.items():
         print("{} -> {}".format(key, value))
