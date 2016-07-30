@@ -109,7 +109,7 @@ def get_card_reconstruction(image, contour, reconstruction_contour):
     shape = np.max(reconstruction_contour, axis=0).astype(np.int32)
 
     reconstruction = cv2.warpPerspective(image, transformation_matrix, tuple(shape))
-    resized_reconstruction = cv2.resize(reconstruction, (32, 32))
+    resized_reconstruction = cv2.resize(reconstruction, (64, 64))
     grayscale_reconstruction = cv2.cvtColor(resized_reconstruction, cv2.COLOR_RGB2GRAY)
     return grayscale_reconstruction
 

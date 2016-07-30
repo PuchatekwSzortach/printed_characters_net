@@ -60,9 +60,9 @@ def main():
     # characters = list(string.ascii_uppercase) + get_hiragana_set() +\
     #              get_katakana_set() + get_digits_set() + get_kanji_set()
 
-    characters = get_digits_set()
+    characters = get_digits_set() + list(string.ascii_uppercase)
 
-    templates_maker = net.data.TemplatesMaker(font, (32, 32))
+    templates_maker = net.data.TemplatesMaker(font, (64, 64))
 
     base_path = "../../data/characters/templates/"
     os.makedirs(base_path, exist_ok=True)
