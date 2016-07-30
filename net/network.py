@@ -31,15 +31,30 @@ class Net:
     A simple neural network
     """
 
-    def __init__(self, layers, output_path):
+    def __init__(self, layers):
 
         self.layers = layers
-        self.output_path = output_path
 
         self.biases = [np.random.rand(nodes_out, 1) for nodes_out in layers[1:]]
 
         self.weights = [np.random.rand(nodes_out, nodes_in) / np.sqrt(nodes_in)
                         for nodes_in, nodes_out in zip(layers[:-1], layers[1:])]
+
+    @staticmethod
+    def from_file(path):
+        """
+        Constructor for loading a net from a file
+        :param path:
+        :return:
+        """
+        with open(path, "r") as file:
+            data = json.load(file)
+
+            network = Net(data["layers"])
+            network.weights = [np.array(w) for w in data["weights"]]
+            network.biases = [np.array(b) for b in data["biases"]]
+
+            return network
 
     def feedforward(self, x):
 
@@ -95,9 +110,9 @@ class Net:
 
         return np.sum(is_correct) / len(is_correct)
 
-    def save_net(self):
+    def save(self, output_path):
 
-        os.makedirs(os.path.dirname(self.output_path), exist_ok=True)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
         data = {
             "layers": self.layers,
@@ -105,7 +120,7 @@ class Net:
             "biases": [b.tolist() for b in self.biases]
         }
 
-        with open(self.output_path, "w") as file:
+        with open(output_path, "w") as file:
             json.dump(data, file)
 
 
@@ -118,7 +133,7 @@ class NetworkTrainer:
 
         self.hyperparameters = hyperparameters
 
-    def train(self, network, data, test_data):
+    def train(self, network, data, test_data, output_path):
 
         best_accuracy = 0
 
@@ -134,7 +149,7 @@ class NetworkTrainer:
 
                 if best_accuracy < accuracy:
                     best_accuracy = accuracy
-                    network.save_net()
+                    network.save(output_path)
 
             if epoch % 10 == 0:
                 self.hyperparameters.learning_rate *= 0.25

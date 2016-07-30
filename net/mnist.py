@@ -53,3 +53,18 @@ def load_mnist_data():
     return training_data, test_data
 
 
+def vectorize_mnist(data):
+
+    images, labels = zip(*data)
+
+    vectorized_images = [image.reshape(image.size, 1) for image in images]
+
+    vectorized_labels = []
+
+    for label in labels:
+
+        vector = np.zeros([10, 1])
+        vector[label] = 1
+        vectorized_labels.append(vector)
+
+    return list(zip(vectorized_images, vectorized_labels))
