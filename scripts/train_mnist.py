@@ -39,10 +39,10 @@ def main():
     hyperparameters = net.network.NetHyperparameters(
         epochs=20, learning_rate=0.01, regularization_coefficient=0.1, batch_size=8)
 
-    network = net.network.Net(
-        layers=[image_size, 30, 10], hyperparameters=hyperparameters)
+    network = net.network.Net(layers=[image_size, 30, 10], output_path='./results/mnist_net.json')
+    trainer = net.network.NetworkTrainer(hyperparameters)
 
-    network.train(data=vectorized_training_data, test_data=vectorized_test_data)
+    trainer.train(network=network, data=vectorized_training_data, test_data=vectorized_test_data)
 
     test_accuracy = network.get_accuracy(vectorized_training_data)
     print("Test accuracy is {}".format(test_accuracy))

@@ -76,9 +76,10 @@ def main():
         epochs=100, learning_rate=0.01, regularization_coefficient=0.01, batch_size=4)
 
     network = net.network.Net(
-            layers=[image_size, 100, labels_size], hyperparameters=hyperparameters)
+            layers=[image_size, 100, labels_size], output_path="./results/characters_net.json")
 
-    network.train(data=training_data, test_data=test_data)
+    trainer = net.network.NetworkTrainer(hyperparameters)
+    trainer.train(network=network, data=training_data, test_data=test_data)
 
 
 if __name__ == "__main__":
