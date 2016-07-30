@@ -26,7 +26,6 @@ class CardCandidatesExtractor:
 
     def get_card_candidates(self, image):
 
-
         image_contours = self._get_image_contours(image)
         card_contours = self._get_card_like_contours(image_contours, image.shape[0] * image.shape[1])
         outer_contours = self._get_outermost_contours(card_contours, image.shape)
@@ -44,7 +43,7 @@ class CardCandidatesExtractor:
             reconstruction = get_card_reconstruction(
                 image, contour, net.constants.straigt_card_coordinates)
 
-            card_candidates.append(CardCandidate(ordered_contours, reconstruction))
+            card_candidates.append(CardCandidate(contour, reconstruction))
 
         return card_candidates
 
@@ -110,7 +109,9 @@ def get_card_reconstruction(image, contour, reconstruction_contour):
     shape = np.max(reconstruction_contour, axis=0).astype(np.int32)
 
     reconstruction = cv2.warpPerspective(image, transformation_matrix, tuple(shape))
-    return reconstruction
+    resized_reconstruction = cv2.resize(reconstruction, (32, 32))
+    grayscale_reconstruction = cv2.cvtColor(resized_reconstruction, cv2.COLOR_RGB2GRAY)
+    return grayscale_reconstruction
 
 
 def get_ordered_card_contour(contour):
@@ -126,7 +127,7 @@ def get_ordered_card_contour(contour):
     if len(contour) != 4:
         raise ValueError("Contour length must be 4")
 
-    ordered_contour = np.zeros(shape=(4,2))
+    ordered_contour = np.zeros_like(contour)
 
     # Sum coordinates for each point
     sums = np.sum(contour, axis=1)

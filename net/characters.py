@@ -20,6 +20,19 @@ def get_characters_list(data_path):
     return [os.path.basename(result[0]) for result in os.walk(data_path)][1:]
 
 
+def transform_image(image):
+    """
+    Given a 2D numpy array representing image, transform it to format
+    recognized by net
+    :param image: 2D numpy array
+    :return: 1D numpy column
+    """
+
+    scaled_image = image.astype(np.float64) / 256.0
+    flipped_image = 1 - scaled_image
+    return flipped_image.reshape([image.size, 1])
+
+
 def transform_data(data, encoder):
     """
     Given a list of tuples (label, image), transform data into a format
@@ -38,12 +51,7 @@ def transform_data(data, encoder):
 
     for image, label in data:
 
-        scaled_image = image.astype(np.float64) / 256.0
-        encoded_label = encoder.encode(label)
-
-        flipped_image = 1 - scaled_image
-
-        tuple = flipped_image.reshape([image.size, 1]), encoded_label
+        tuple = transform_image(image), encoder.encode(label)
         transformed_data.append(tuple)
 
     return transformed_data
