@@ -1,6 +1,6 @@
 """
-A simple file that essentially checks if previously trained characters network can be
-successfully retrieved from a file and used for predictions.
+Simple program that helps understand classification mistakes
+characters network does.
 """
 
 import net.network
@@ -21,10 +21,13 @@ def main():
     test_data = net.characters.transform_data(test_data, encoder)
 
     network = net.network.Net.from_file("./results/characters_net.json")
+    debugger = net.network.NetworkDebugger(network, encoder)
 
-    test_accuracy = network.get_accuracy(test_data)
-    print("Test accuracy is {}".format(test_accuracy))
+    mistakes = debugger.get_mistakes(test_data)
+
+    for key, value in mistakes.items():
+        print("{} -> {}".format(key, value))
+
 
 if __name__ == "__main__":
-
     main()

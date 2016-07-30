@@ -7,6 +7,7 @@ import random
 import time
 import json
 import os
+import collections
 
 import net.utilities
 
@@ -193,3 +194,32 @@ class NetworkTrainer:
 
         network.biases = [b - (learning_rate * b_grad)
                       for b, b_grad in zip(network.biases, bias_gradients)]
+
+
+class NetworkDebugger:
+    """
+    Class for debugging networks.
+    In particular it offers insight into what classification mistakes network does
+    """
+
+    def __init__(self, network, encoder):
+
+        self.network = network
+        self.encoder = encoder
+
+    def get_mistakes(self, data):
+
+        mistakes = []
+
+        for x, y in data:
+
+            prediction = self.network.feedforward(x)
+
+            correct_label = self.encoder.decode(y)
+            predicted_label = self.encoder.decode(prediction)
+
+            if correct_label != predicted_label:
+                mistakes.append(predicted_label)
+
+        print("Mistakes are: {}".format(mistakes))
+        return collections.Counter(mistakes)

@@ -7,6 +7,7 @@ import cv2
 import glob
 import tqdm
 import multiprocessing
+import random
 
 class Encoder:
     """
@@ -98,6 +99,8 @@ def get_training_test_data_split(data_dictionary, split_ratio):
     test_data = []
 
     for label, images in data_dictionary.items():
+
+        random.shuffle(images)
 
         training_size = int(len(images) * split_ratio)
         data = [(image, label) for image in images]
