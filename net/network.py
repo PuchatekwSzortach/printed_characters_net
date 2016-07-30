@@ -151,7 +151,7 @@ class NetworkTrainer:
                     best_accuracy = accuracy
                     network.save(output_path)
 
-            if epoch % 10 == 0:
+            if epoch % 20 == 0:
                 self.hyperparameters.learning_rate *= 0.25
 
             batched_data = net.utilities.get_data_batches(data, self.hyperparameters.batch_size)
