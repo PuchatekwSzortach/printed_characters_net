@@ -158,3 +158,54 @@ def data_tuples_to_matrices(data):
 
     return matrices
 
+
+def sigmoid(z):
+
+    try:
+
+        # Do a bit of acrobatics to ensure we don't compute values that lead to division
+        # by infinity. For inputs that would lead to that, simply return 0
+        output = np.zeros(z.shape)
+
+        indices = np.where(-50 < z)
+        output[indices] = 1 / (1 + np.exp(-z[indices]))
+
+        return output
+
+    except RuntimeWarning as problem:
+
+        print("Runtime warning occurred in sigmoid for input")
+        print(problem)
+        print(z)
+        print("that gives output")
+        print(output)
+        exit(0)
+
+
+def sigmoid_prime(z):
+
+    return sigmoid(z) * (1 - sigmoid(z))
+
+
+def softmax(z):
+
+    try:
+        # Clip values to sensible range for numerical stability
+        clipped = np.clip(z, -50, 50)
+        return np.exp(clipped) / np.sum(np.exp(clipped), axis=0)
+
+    except RuntimeWarning as problem:
+
+        print("Runtime warning occurred in softmax")
+        print(problem)
+        print("For input")
+        print(z)
+        exit(0)
+
+
+def relu(z):
+    return z * (z > 0)
+
+
+def relu_prime(z):
+    return (z > 0).astype(np.float32)

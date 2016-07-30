@@ -11,58 +11,6 @@ import net.utilities
 warnings.filterwarnings('error')
 
 
-def sigmoid(z):
-
-    try:
-
-        # Do a bit of acrobatics to ensure we don't compute values that lead to division
-        # by infinity. For inputs that would lead to that, simply return 0
-        output = np.zeros(z.shape)
-
-        indices = np.where(-50 < z)
-        output[indices] = 1 / (1 + np.exp(-z[indices]))
-
-        return output
-
-    except RuntimeWarning as problem:
-
-        print("Runtime warning occurred in sigmoid for input")
-        print(problem)
-        print(z)
-        print("that gives output")
-        print(output)
-        exit(0)
-
-
-def sigmoid_prime(z):
-
-    return sigmoid(z) * (1 - sigmoid(z))
-
-
-def softmax(z):
-
-    try:
-        # Clip values to sensible range for numerical stability
-        clipped = np.clip(z, -50, 50)
-        return np.exp(clipped) / np.sum(np.exp(clipped), axis=0)
-
-    except RuntimeWarning as problem:
-
-        print("Runtime warning occurred in softmax")
-        print(problem)
-        print("For input")
-        print(z)
-        exit(0)
-
-
-def relu(z):
-    return z * (z > 0)
-
-
-def relu_prime(z):
-    return (z > 0).astype(np.float32)
-
-
 class Net:
     """
     A simple neural network
@@ -84,18 +32,33 @@ class Net:
 
     def feedforward(self, x):
 
-        a = x.copy()
+        _, activations = self._feedforward_train(x)
+        return activations[-1]
+
+    def _feedforward_train(self, x):
+        """
+        Internal feedforward code. Returns a list of preactivations and activations
+        :param x: input
+        :return: a tuple (preactivations list, activations list)
+        """
+
         zs = []
+        activations = [x]
+
+        a = x
 
         for w, b in zip(self.weights, self.biases):
 
             z = np.dot(w, a) + b
             zs.append(z)
 
-            a = relu(z)
+            a = net.utilities.relu(z)
+            activations.append(a)
 
         # Use softmax output
-        return softmax(zs[-1])
+        activations[-1] = net.utilities.softmax(zs[-1])
+
+        return zs, activations
 
     def train(self, data, test_data):
 
@@ -108,6 +71,9 @@ class Net:
                 print("Epoch {}".format(epoch))
                 print(self.get_accuracy(test_data))
 
+            if epoch % 10 == 0:
+                self.learning_rate *= 0.25
+
             batched_data = net.utilities.get_data_batches(data, self.batch_size)
 
             for index, batch in enumerate(batched_data):
@@ -116,21 +82,7 @@ class Net:
 
     def _update(self, x, y, learning_rate):
 
-        zs = []
-        activations = [x]
-
-        a = x
-
-        for w, b in zip(self.weights, self.biases):
-
-            z = np.dot(w, a) + b
-            zs.append(z)
-
-            a = relu(z)
-            activations.append(a)
-
-        # Use softmax output
-        activations[-1] = softmax(zs[-1])
+        zs, activations = self._feedforward_train(x)
 
         bias_gradients = [None] * len(self.biases)
         weights_gradients = [None] * len(self.weights)
@@ -144,7 +96,7 @@ class Net:
 
         for index in indices:
 
-            error = np.dot(self.weights[index + 1].T, error) * relu_prime(zs[index])
+            error = np.dot(self.weights[index + 1].T, error) * net.utilities.relu_prime(zs[index])
 
             bias_gradients[index] = np.mean(error, axis=1).reshape(error.shape[0], 1)
 
@@ -160,7 +112,7 @@ class Net:
 
     def _get_cost(self, y, prediction):
         """
-        Compute cross entropy cost
+        Compute cost
         :param y:
         :param prediction:
         :return:
