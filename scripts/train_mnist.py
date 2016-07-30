@@ -36,8 +36,11 @@ def main():
 
     image_size = training_data[0][0].size
 
+    hyperparameters = net.network.NetHyperparameters(
+        epochs=20, learning_rate=0.01, regularization_coefficient=0.1, batch_size=8)
+
     network = net.network.Net(
-        layers=[image_size, 30, 10], epochs=20, learning_rate=0.01, regularization_coefficient=0.1, batch_size=8)
+        layers=[image_size, 30, 10], hyperparameters=hyperparameters)
 
     network.train(data=vectorized_training_data, test_data=vectorized_test_data)
 

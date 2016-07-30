@@ -72,9 +72,11 @@ def main():
     image_size = training_data[0][0].size
     labels_size = len(characters)
 
+    hyperparameters = net.network.NetHyperparameters(
+        epochs=100, learning_rate=0.01, regularization_coefficient=0.01, batch_size=4)
+
     network = net.network.Net(
-            layers=[image_size, 100, labels_size], epochs=100,
-            learning_rate=0.01, regularization_coefficient=0.01, batch_size=4)
+            layers=[image_size, 100, labels_size], hyperparameters=hyperparameters)
 
     network.train(data=training_data, test_data=test_data)
 

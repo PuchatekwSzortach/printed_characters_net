@@ -11,12 +11,25 @@ import net.utilities
 warnings.filterwarnings('error')
 
 
+class NetHyperparameters:
+    """
+    A very simple structure bundling together net hyperparameters
+    """
+
+    def __init__(self, epochs, learning_rate, regularization_coefficient, batch_size):
+
+        self.epochs = epochs
+        self.learning_rate = learning_rate
+        self.regularization_coefficient = regularization_coefficient
+        self.batch_size = batch_size
+
+
 class Net:
     """
     A simple neural network
     """
 
-    def __init__(self, layers, epochs, learning_rate, regularization_coefficient, batch_size):
+    def __init__(self, layers, hyperparameters):
 
         self.layers = layers
 
@@ -25,10 +38,7 @@ class Net:
         self.weights = [np.random.rand(nodes_out, nodes_in) / np.sqrt(nodes_in)
                         for nodes_in, nodes_out in zip(layers[:-1], layers[1:])]
 
-        self.epochs = epochs
-        self.learning_rate = learning_rate
-        self.regularization_coefficient = regularization_coefficient
-        self.batch_size = batch_size
+        self.hyperparameters = hyperparameters
 
     def feedforward(self, x):
 
@@ -62,7 +72,7 @@ class Net:
 
     def train(self, data, test_data):
 
-        for epoch in range(self.epochs):
+        for epoch in range(self.hyperparameters.epochs):
 
             random.shuffle(data)
 
@@ -72,13 +82,13 @@ class Net:
                 print(self.get_accuracy(test_data))
 
             if epoch % 10 == 0:
-                self.learning_rate *= 0.25
+                self.hyperparameters.learning_rate *= 0.25
 
-            batched_data = net.utilities.get_data_batches(data, self.batch_size)
+            batched_data = net.utilities.get_data_batches(data, self.hyperparameters.batch_size)
 
             for index, batch in enumerate(batched_data):
                 x_batch, y_batch = net.utilities.data_tuples_to_matrices(batch)
-                self._update(x_batch, y_batch, self.learning_rate)
+                self._update(x_batch, y_batch, self.hyperparameters.learning_rate)
 
     def _update(self, x, y, learning_rate):
 
@@ -90,7 +100,7 @@ class Net:
         error = self._get_output_layer_error(y, activations[-1])
 
         bias_gradients[-1] = np.mean(error, axis=1).reshape(error.shape[0], 1)
-        weights_gradients[-1] = np.dot(error, activations[-2].T) / self.batch_size
+        weights_gradients[-1] = np.dot(error, activations[-2].T) / self.hyperparameters.batch_size
 
         indices = range(len(self.weights) - 2, -1, -1)
 
@@ -101,8 +111,8 @@ class Net:
             bias_gradients[index] = np.mean(error, axis=1).reshape(error.shape[0], 1)
 
             weights_gradients[index] = \
-                np.dot(error, activations[index].T) / self.batch_size + \
-                (self.regularization_coefficient * self.weights[index] / self.batch_size)
+                np.dot(error, activations[index].T) / self.hyperparameters.batch_size + \
+                (self.hyperparameters.regularization_coefficient * self.weights[index] / self.hyperparameters.batch_size)
 
         self.weights = [w - (learning_rate * w_grad)
                         for w, w_grad in zip(self.weights, weights_gradients)]
@@ -122,7 +132,8 @@ class Net:
 
         squared_weights = [w * w for w in self.weights]
         squared_weights_sum = np.sum([np.sum(sw) for sw in squared_weights])
-        regularization_cost = (self.regularization_coefficient * squared_weights_sum) / (2 * self.batch_size)
+        regularization_cost = (self.hyperparameters.regularization_coefficient * squared_weights_sum) / \
+                              (2 * self.hyperparameters.batch_size)
 
         return basic_cost + regularization_cost
 
