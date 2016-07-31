@@ -18,6 +18,7 @@ The core logic of the project is contained in scripts directory, which consists 
 - `detection.py` - detect printed templates in real time video stream
 
 Notes on data: 
+
 1. You can control amount of artificial data created with constants defined in `create_artificial_data.py`. Given ~250 labels I recommend going for ~400 images per label - this should let you create all data and train the classifier to ~95% accuracy in under 15mins on an decent machine. You can get 90% results in 5mins or so when using 250 images per label.  
 2. Best resulst are of course obtained with real data, but even artificial data can work really well, especially if characters set is constrained to a small size, say only latin characters.
 
