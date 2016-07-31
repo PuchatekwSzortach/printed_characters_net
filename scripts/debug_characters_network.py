@@ -33,7 +33,10 @@ def main():
     else:
 
         for key, value in mistakes_dictionary.items():
-            print("{} was classified as : {}".format(key, value))
+            print("{} was misclassified as:".format(key))
+
+            for character, count in value.items():
+                print("  {} - {} times".format(character, count))
 
 
 if __name__ == "__main__":

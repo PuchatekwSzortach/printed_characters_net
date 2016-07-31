@@ -85,3 +85,38 @@ def test_data_tuples_to_matrices_complex():
     assert np.all(expected_a == matrices[0])
     assert np.all(expected_b == matrices[1])
     assert np.all(expected_c == matrices[2])
+
+
+def test_remove_visually_identical_characters_trivial():
+
+    characters = ['a', 'b', 'c']
+
+    assert characters == net.utilities.remove_visually_identical_characters(characters)
+
+
+def test_remove_visually_identical_characters_trivial_repetitions():
+
+    characters = ['a', 'b', 'c', 'a']
+    expected = ['a', 'b', 'c']
+
+    assert expected == net.utilities.remove_visually_identical_characters(characters)
+
+
+def test_remove_visually_identical_characters_hiragana_katakana_repetitions_1():
+
+    # Please note first and last characters are in fact different characters
+    # with different unicodes. They just look the same
+    characters = ['ぺ', 'a', 'b', 'c', 'ペ']
+    expected = ['ぺ', 'a', 'b', 'c']
+
+    assert expected == net.utilities.remove_visually_identical_characters(characters)
+
+
+def test_remove_visually_identical_characters_hiragana_katakana_repetitions_2():
+
+    # Please note first and last characters are in fact different characters
+    # with different unicodes. They just look the same
+    characters = ['ぺ', 'a', 'べ', 'b', 'c', 'ペ']
+    expected = ['ぺ', 'a', 'べ', 'b', 'c']
+
+    assert expected == net.utilities.remove_visually_identical_characters(characters)

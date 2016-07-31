@@ -14,6 +14,7 @@ import re
 import warnings
 
 import tqdm
+import net.utilities
 
 
 def get_hiragana_set():
@@ -60,7 +61,10 @@ def main():
     # characters = list(string.ascii_uppercase) + get_hiragana_set() +\
     #              get_katakana_set() + get_digits_set() + get_kanji_set()
 
-    characters = get_digits_set() + list(string.ascii_uppercase)
+    characters = get_digits_set() + list(string.ascii_uppercase) + get_hiragana_set() +\
+                 get_katakana_set()
+
+    characters = net.ut
 
     templates_maker = net.data.TemplatesMaker(font, (64, 64))
 

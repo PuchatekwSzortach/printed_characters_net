@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Various utilities
 """
@@ -8,6 +9,8 @@ import glob
 import tqdm
 import multiprocessing
 import random
+import orderedset
+
 
 class Encoder:
     """
@@ -212,3 +215,37 @@ def relu(z):
 
 def relu_prime(z):
     return (z > 0).astype(np.float32)
+
+
+def remove_visually_identical_characters(characters):
+    """
+    Some Japanese characters, especially some hiragana and katakana, look the same.
+    So if our set contains both, remove one of them
+    :param characters:
+    :return: characters with visually identical doubles removed and ordered of characters preserver
+    """
+
+    characters = list(orderedset.OrderedSet(characters))
+
+    # There characters have different unicodes, but visually they are identical
+    identical_characters_list = [
+        ['ぺ', 'ペ'],
+        ['ベ', 'べ'],
+        ['ヘ', 'へ'],
+    ]
+
+    for identical_characters in identical_characters_list:
+
+        try:
+            first_index = characters.index(identical_characters[0])
+            second_index = characters.index(identical_characters[1])
+
+            index_to_pop = first_index if first_index > second_index else second_index
+            characters.pop(index_to_pop)
+
+        except ValueError:
+            # It's okay if element doesn't exist in the list.
+            # In fact it means we have no duplicates to remove
+            pass
+
+    return characters

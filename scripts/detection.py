@@ -50,34 +50,43 @@ def main():
 
     while True:
 
-        _, frame = video_capture.read()
+        try:
 
-        card_candidates = net.vision.CardCandidatesExtractor().get_card_candidates(frame)
+            _, frame = video_capture.read()
 
-        for candidate in card_candidates:
+            card_candidates = net.vision.CardCandidatesExtractor().get_card_candidates(frame)
 
-            transformed_image = net.characters.transform_image(candidate.image)
-            prediction = network.feedforward(transformed_image)
+            for candidate in card_candidates:
 
-            # cv2.drawContours(image=frame, contours=[candidate.coordinates],
-            #                  contourIdx=0, color=(0, 255, 0), thickness=4)
-
-            if np.max(prediction) > 0.5:
-
-                character = encoder.decode(prediction)
-
-                frame = characters_drawer.draw_character(frame, character, candidate.coordinates)
+                transformed_image = net.characters.transform_image(candidate.image)
+                prediction = network.feedforward(transformed_image)
 
                 cv2.drawContours(image=frame, contours=[candidate.coordinates],
-                                 contourIdx=0, color=(255, 0, 0), thickness=4)
+                                 contourIdx=0, color=(0, 255, 0), thickness=4)
 
-        cv2.imshow("image", frame)
+                if np.max(prediction) > 0.5:
 
-        key = cv2.waitKey(30)
+                    character = encoder.decode(prediction)
 
-        # If spacebar was pressed
-        if key == 32:
-            break
+                    frame = characters_drawer.draw_character(frame, character, candidate.coordinates)
+
+                    cv2.drawContours(image=frame, contours=[candidate.coordinates],
+                                     contourIdx=0, color=(255, 0, 0), thickness=4)
+
+            cv2.imshow("image", frame)
+
+            key = cv2.waitKey(30)
+
+            # If spacebar was pressed
+            if key == 32:
+                break
+
+        except Exception as ex:
+
+            print("An exception was caught")
+            print(type(ex))
+            print(ex)
+
 
 if __name__ == "__main__":
     main()
