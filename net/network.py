@@ -207,7 +207,25 @@ class NetworkDebugger:
         self.network = network
         self.encoder = encoder
 
-    def get_mistakes(self, data):
+    def get_mistakes(self, data, mininmum_count=1):
+
+        mistakes_list_dictionary = self._get_mistakes_list_dictionary(data)
+
+        mistakes_counting_dictionary = {}
+
+        for true_label, wrong_labels in mistakes_list_dictionary.items():
+
+            mistakes_counter = collections.Counter(wrong_labels)
+
+            filtered_mistakes_counter = {
+                wrong_label: count for wrong_label, count in mistakes_counter.items()
+                if count >= mininmum_count}
+
+            mistakes_counting_dictionary[true_label] = filtered_mistakes_counter
+
+        return mistakes_counting_dictionary
+
+    def _get_mistakes_list_dictionary(self, data):
 
         mistakes_list_dictionary = collections.defaultdict(list)
 
@@ -221,9 +239,4 @@ class NetworkDebugger:
             if correct_label != predicted_label:
                 mistakes_list_dictionary[correct_label].append(predicted_label)
 
-        mistakes_counting_dictionary = {}
-
-        for key, value in mistakes_list_dictionary.items():
-            mistakes_counting_dictionary[key] = collections.Counter(value)
-
-        return mistakes_counting_dictionary
+        return mistakes_list_dictionary

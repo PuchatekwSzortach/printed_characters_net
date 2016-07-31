@@ -24,7 +24,8 @@ def main():
     network = net.network.Net.from_file("./results/characters_net.json")
     debugger = net.network.NetworkDebugger(network, encoder)
 
-    mistakes_dictionary = debugger.get_mistakes(training_data + test_data)
+    minimum_count = 5
+    mistakes_dictionary = debugger.get_mistakes(training_data + test_data, minimum_count)
 
     if len(mistakes_dictionary.keys()) == 0:
 
@@ -32,11 +33,15 @@ def main():
 
     else:
 
-        for key, value in mistakes_dictionary.items():
-            print("{} was misclassified as:".format(key))
+        print("Mistakes made at least {} times".format(minimum_count))
 
-            for character, count in value.items():
-                print("  {} - {} times".format(character, count))
+        for true_label, mistakes_dictionary in mistakes_dictionary.items():
+
+            if len(mistakes_dictionary.keys()) > 0:
+                print("{} was misclassified as:".format(true_label))
+
+                for wrong_label, mistakes_count in mistakes_dictionary.items():
+                    print("  {} - {} times".format(wrong_label, mistakes_count))
 
 
 if __name__ == "__main__":

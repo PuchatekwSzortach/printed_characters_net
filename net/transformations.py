@@ -119,7 +119,7 @@ def blur_image(image, kernel=None):
     """
 
     if kernel is None:
-        kernel = np.random.randint(1, 6, size=[2])
+        kernel = np.random.randint(1, 5, size=[2])
 
     return cv2.blur(image, tuple(kernel))
 

@@ -67,7 +67,6 @@ def main():
                 if np.max(prediction) > 0.5:
 
                     character = encoder.decode(prediction)
-
                     frame = characters_drawer.draw_character(frame, character, candidate.coordinates)
 
                     cv2.drawContours(image=frame, contours=[candidate.coordinates],
