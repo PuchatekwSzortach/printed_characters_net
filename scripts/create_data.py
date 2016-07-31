@@ -36,6 +36,12 @@ def create_template_data(template_path, base_path, transformations, images_count
 
     image = cv2.cvtColor(cv2.imread(template_path), cv2.COLOR_RGB2GRAY)
 
+    # First apply an intensity transformation to template
+    image = net.transformations.change_intensity(image, 75, 10)
+
+    # Caputer images are often somewhat blurred, so apply a light blurring
+    image = net.transformations.blur_image(image, (3, 3))
+
     # A series of random integers representing number of transformations to
     # be applied for each image
     transformations_counts = np.random.randint(1, len(transformations.keys()) + 1, size=images_count)
@@ -62,6 +68,7 @@ def main():
         "intensity_change": net.transformations.change_intensity,
         "noise": net.transformations.add_noise,
         "perspective_transformation": net.transformations.apply_perspective_transformation,
+        "blur": net.transformations.blur_image,
     }
 
     templates_paths = glob.glob("../../data/characters/templates/*.jpg")

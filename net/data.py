@@ -8,6 +8,7 @@ import PIL.ImageFont
 
 import numpy as np
 import cv2
+import net.printing
 
 
 class TemplatesMaker:
@@ -55,7 +56,10 @@ class TemplatesMaker:
             y_start:y_start + character_image.shape[0],
             x_start:x_start + character_image.shape[1]] = character_image
 
-        return cv2.resize(full_image, self.size)
+        scaled_image = cv2.resize(full_image, self.size)
+        black_bordered_image = net.printing.get_image_with_border(scaled_image, 2, 0)
+        white_bordered_image = net.printing.get_image_with_border(black_bordered_image, 4, 255)
+        return cv2.resize(white_bordered_image, self.size)
 
     def _get_character_image(self, character):
 

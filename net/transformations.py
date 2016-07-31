@@ -46,14 +46,20 @@ def rotate_image(image):
     return cv2.warpAffine(image, rotation_matrix, dsize=image.shape)
 
 
-def change_intensity(image):
+def change_intensity(image, background_change=None, foreground_change=None):
     """
     Change background and foreground intensity by a random value
-    :param image:
-    :return: Image with intensity of background and foreground changed
+    :param image: Image with intensity of background and foreground changed
+    :param background_change: intensity change of background. Random if none
+    :param foreground_change: intensity change of background. Random if none
+    :return: Altered image
     """
 
-    background_change, foreground_change = np.random.randint(10, 50, [2])
+    if background_change is None:
+        background_change = np.random.randint(10, 50)
+
+    if foreground_change is None:
+        foreground_change = np.random.randint(10, 50)
 
     altered_image = image.copy()
 
@@ -103,3 +109,16 @@ def apply_perspective_transformation(image):
     transformation_matrix = cv2.getPerspectiveTransform(corners, distorted_corners)
     return cv2.warpPerspective(image, transformation_matrix, image.shape)
 
+
+def blur_image(image, kernel=None):
+    """
+    Blur image using normalized box filter
+    :param image: image to blur
+    :param kernel: kernel specifying strength of blur
+    :return: blurred image
+    """
+
+    if kernel is None:
+        kernel = np.random.randint(1, 8, size=[2])
+
+    return cv2.blur(image, tuple(kernel))
