@@ -36,7 +36,7 @@ def rotate_image(image):
     """
 
     # Get rotation amount in degrees
-    max_angle = 5
+    max_angle = 3
     angle = np.random.randint(-max_angle, max_angle)
 
     # Get rotation centre
@@ -103,7 +103,7 @@ def apply_perspective_transformation(image):
     corners[2, :] = [image.shape[1], image.shape[0]]
     corners[3, :] = (0, image.shape[0])
 
-    max_distortion = max(image.shape) / 20
+    max_distortion = max(image.shape) / 40
     distorted_corners = corners + np.random.uniform(-max_distortion, max_distortion, corners.shape).astype(np.float32)
 
     transformation_matrix = cv2.getPerspectiveTransform(corners, distorted_corners)
@@ -122,3 +122,15 @@ def blur_image(image, kernel=None):
         kernel = np.random.randint(1, 8, size=[2])
 
     return cv2.blur(image, tuple(kernel))
+
+
+def trim_border(image):
+    """
+    Randomly trim off a few pixels from around the border
+    :param image:
+    :return: image with border removed. Resized to initial image size
+    """
+
+    border = np.random.randint(1, int(0.1 * np.max(image.shape)))
+    new_image = image[border:image.shape[0] - border, border: image.shape[1] - border].copy()
+    return cv2.resize(new_image, image.shape)

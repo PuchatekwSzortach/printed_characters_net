@@ -24,10 +24,16 @@ def main():
     network = net.network.Net.from_file("./results/characters_net.json")
     debugger = net.network.NetworkDebugger(network, encoder)
 
-    mistakes = debugger.get_mistakes(training_data + test_data)
+    mistakes_dictionary = debugger.get_mistakes(training_data + test_data)
 
-    for key, value in mistakes.items():
-        print("{} -> {}".format(key, value))
+    if len(mistakes_dictionary.keys()) == 0:
+
+        print("Net made no mistakes, great!")
+
+    else:
+
+        for key, value in mistakes_dictionary.items():
+            print("{} was classified as : {}".format(key, value))
 
 
 if __name__ == "__main__":

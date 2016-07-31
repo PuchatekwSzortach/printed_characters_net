@@ -69,6 +69,7 @@ def main():
         "noise": net.transformations.add_noise,
         "perspective_transformation": net.transformations.apply_perspective_transformation,
         "blur": net.transformations.blur_image,
+        "trim_border": net.transformations.trim_border
     }
 
     templates_paths = glob.glob("../../data/characters/templates/*.jpg")

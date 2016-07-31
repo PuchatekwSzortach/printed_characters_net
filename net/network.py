@@ -209,7 +209,7 @@ class NetworkDebugger:
 
     def get_mistakes(self, data):
 
-        mistakes = []
+        mistakes_dictionary = collections.defaultdict(list)
 
         for x, y in data:
 
@@ -219,7 +219,6 @@ class NetworkDebugger:
             predicted_label = self.encoder.decode(prediction)
 
             if correct_label != predicted_label:
-                mistakes.append(predicted_label)
+                mistakes_dictionary[correct_label].append(predicted_label)
 
-        print("Mistakes are: {}".format(mistakes))
-        return collections.Counter(mistakes)
+        return mistakes_dictionary
