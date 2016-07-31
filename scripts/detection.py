@@ -59,8 +59,8 @@ def main():
             transformed_image = net.characters.transform_image(candidate.image)
             prediction = network.feedforward(transformed_image)
 
-            cv2.drawContours(image=frame, contours=[candidate.coordinates],
-                             contourIdx=0, color=(0, 255, 0), thickness=4)
+            # cv2.drawContours(image=frame, contours=[candidate.coordinates],
+            #                  contourIdx=0, color=(0, 255, 0), thickness=4)
 
             if np.max(prediction) > 0.5:
 

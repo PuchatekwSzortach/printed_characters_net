@@ -36,7 +36,7 @@ def create_page(canvas, sentence, characters_paths_dictionary):
 
     height, width = reportlab.lib.pagesizes.A4
     image_size = int(width * 0.08)
-    margin = int(width * 0.03)
+    margin = int(width * 0.01)
 
     padded_image_size = image_size + (2 * margin)
 
@@ -81,10 +81,10 @@ def main():
     create_page(canvas, "HIYANE SAN, ONISHI SAN", characters_path_dictionary)
     canvas.showPage()
 
-    create_page(canvas, "HOW ABOUT", characters_path_dictionary)
+    create_page(canvas, "LETS MAKE TOGETHER", characters_path_dictionary)
     canvas.showPage()
 
-    create_page(canvas, "WE MAKE ENGLISH KOTOBANBAN", characters_path_dictionary)
+    create_page(canvas, "ENGLISH KOTOBANBAN", characters_path_dictionary)
     canvas.showPage()
 
     canvas.save()
