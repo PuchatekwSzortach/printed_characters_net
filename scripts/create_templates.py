@@ -12,6 +12,7 @@ import string
 import os
 import re
 import warnings
+import configobj
 
 import tqdm
 import net.utilities
@@ -63,7 +64,10 @@ def main():
 
     characters = net.utilities.remove_visually_identical_characters(characters)
 
-    templates_maker = net.data.TemplatesMaker(font, (64, 64))
+    config = configobj.ConfigObj('configuration.ini')
+    image_size = [int(value) for value in config['image_size']]
+
+    templates_maker = net.data.TemplatesMaker(font, tuple(image_size))
 
     base_path = "../../data/characters/templates/"
     os.makedirs(base_path, exist_ok=True)

@@ -14,6 +14,7 @@ import numpy as np
 import PIL.ImageFont
 import PIL.Image
 import PIL.ImageDraw
+import configobj
 
 
 class CharactersDrawer:
@@ -32,7 +33,7 @@ class CharactersDrawer:
         font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=font_size)
 
         draw = PIL.ImageDraw.ImageDraw(pil_image)
-        draw.text(character_outline[2] - (0.5 * font_size), text=character, font=font, fill=(255, 0, 0))
+        draw.text(character_outline[2] - (0.5 * font_size), text=character, font=font, fill=(0, 0, 255))
 
         return np.array(pil_image)
 
@@ -48,44 +49,39 @@ def main():
 
     characters_drawer = CharactersDrawer()
 
+    config = configobj.ConfigObj('configuration.ini')
+    reconstruction_size = tuple([int(value) for value in config['image_size']])
+
     while True:
 
-        try:
+        _, frame = video_capture.read()
 
-            _, frame = video_capture.read()
+        card_candidates = net.vision.CardCandidatesExtractor()\
+            .get_card_candidates(frame, reconstruction_size)
 
-            card_candidates = net.vision.CardCandidatesExtractor().get_card_candidates(frame)
+        for candidate in card_candidates:
 
-            for candidate in card_candidates:
+            transformed_image = net.characters.transform_image(candidate.image)
+            prediction = network.feedforward(transformed_image)
 
-                transformed_image = net.characters.transform_image(candidate.image)
-                prediction = network.feedforward(transformed_image)
+            cv2.drawContours(image=frame, contours=[candidate.coordinates],
+                             contourIdx=0, color=(0, 255, 0), thickness=4)
+
+            if np.max(prediction) > 0.5:
 
                 cv2.drawContours(image=frame, contours=[candidate.coordinates],
-                                 contourIdx=0, color=(0, 255, 0), thickness=4)
+                                 contourIdx=0, color=(255, 0, 0), thickness=4)
 
-                if np.max(prediction) > 0.5:
+                character = encoder.decode(prediction)
+                frame = characters_drawer.draw_character(frame, character, candidate.coordinates)
 
-                    character = encoder.decode(prediction)
-                    frame = characters_drawer.draw_character(frame, character, candidate.coordinates)
+        cv2.imshow("image", frame)
 
-                    cv2.drawContours(image=frame, contours=[candidate.coordinates],
-                                     contourIdx=0, color=(255, 0, 0), thickness=4)
+        key = cv2.waitKey(30)
 
-            cv2.imshow("image", frame)
-
-            key = cv2.waitKey(30)
-
-            # If spacebar was pressed
-            if key == 32:
-                break
-
-        except Exception as ex:
-
-            print("An exception was caught")
-            print(type(ex))
-            print(ex)
-
+        # If spacebar was pressed
+        if key == 32:
+            break
 
 if __name__ == "__main__":
     main()

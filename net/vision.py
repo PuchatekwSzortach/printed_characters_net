@@ -5,9 +5,6 @@ Detecting card candidates in images, handling image contours and like.
 import cv2
 import numpy as np
 
-import net.constants
-
-
 class CardCandidate:
     """
     A very simple container for a card candidate
@@ -24,7 +21,7 @@ class CardCandidatesExtractor:
     Class for extracting card candidates from an input image
     """
 
-    def get_card_candidates(self, image):
+    def get_card_candidates(self, image, reconstruction_size):
 
         image_contours = self._get_image_contours(image)
         card_contours = self._get_card_like_contours(image_contours, image.shape[0] * image.shape[1])
@@ -32,6 +29,13 @@ class CardCandidatesExtractor:
 
         # OpenCV puts into contour an unnecessary dimension, so remove it
         squeezed_contours = [np.squeeze(contour) for contour in outer_contours]
+
+        reconstruction_contour = np.array([
+            [0, 0],
+            [reconstruction_size[1], 0],
+            [reconstruction_size[1], reconstruction_size[0]],
+            [0, reconstruction_size[0]]
+        ])
 
         # We need to make sure ordering within each contour is consistent
         ordered_contours = [get_ordered_card_contour(contour) for contour in squeezed_contours]
@@ -41,7 +45,7 @@ class CardCandidatesExtractor:
         for contour in ordered_contours:
 
             reconstruction = get_card_reconstruction(
-                image, contour, net.constants.straigt_card_coordinates)
+                image, contour, reconstruction_contour, reconstruction_size)
 
             card_candidates.append(CardCandidate(contour, reconstruction))
 
@@ -86,7 +90,7 @@ class CardCandidatesExtractor:
         return self._get_card_like_contours(outer_contours, image_shape[0] * image_shape[1])
 
 
-def get_card_reconstruction(image, contour, reconstruction_contour):
+def get_card_reconstruction(image, contour, reconstruction_contour, reconstruction_size):
     """
     Given an image, a contour inside it and a reconstruction_contour,
         map image contained inside contour to reconstruction contour.
@@ -109,7 +113,8 @@ def get_card_reconstruction(image, contour, reconstruction_contour):
     shape = np.max(reconstruction_contour, axis=0).astype(np.int32)
 
     reconstruction = cv2.warpPerspective(image, transformation_matrix, tuple(shape))
-    resized_reconstruction = cv2.resize(reconstruction, (64, 64))
+
+    resized_reconstruction = cv2.resize(reconstruction, reconstruction_size)
     grayscale_reconstruction = cv2.cvtColor(resized_reconstruction, cv2.COLOR_RGB2GRAY)
     return grayscale_reconstruction
 
