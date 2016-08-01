@@ -20,7 +20,7 @@ The core logic of the project is contained in scripts directory, which consists 
 Notes on data: 
 
 1. You can control amount of artificial data created with constants defined in `create_artificial_data.py`. Given ~250 labels I recommend going for ~400 images per label - this should let you create all data and train the classifier to ~95% accuracy in under 15mins on an decent machine. You can get 90% results in 5mins or so when using 250 images per label.  
-2. Best resulst are of course obtained with real data, but even artificial data can work really well, especially if characters set is constrained to a small size, say only latin characters.
+2. Best results are of course obtained with real data, but even artificial data can work really well, especially if characters set is constrained to a small size, say only latin characters.
 
 NOTE:
 This project uses mostly plain numpy for neural networks code. I'm aware of frameworks like Theano and Tensorflow that could do a lot of heavy lifting for me, while at the same time providing faster execution on Nvidia GPUs, but my main goal for this project is to check my own understanding of neural networks concepts. Hence I strive to implement all steps of the learning algorithm from a scratch.
