@@ -281,15 +281,10 @@ class Logger:
 
     def log_training_progress(self, epoch, accuracy):
 
-        max_weights = [np.max(w) for w in self.network.weights]
-        min_weights = [np.min(w) for w in self.network.weights]
-
         weights_percentiles = [np.percentile(w, [0, 25, 50, 75, 100]) for w in self.network.weights]
 
         epoch_summary = {
             'accuracy': accuracy,
-            'max_weights': max_weights,
-            'min_weights': min_weights,
             'weights_percentiles': weights_percentiles
         }
 
