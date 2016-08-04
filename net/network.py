@@ -284,7 +284,7 @@ class Logger:
         max_weights = [np.max(w) for w in self.network.weights]
         min_weights = [np.min(w) for w in self.network.weights]
 
-        weights_percentiles = [np.percentile(w, [25, 50, 75, 100]) for w in self.network.weights]
+        weights_percentiles = [np.percentile(w, [0, 25, 50, 75, 100]) for w in self.network.weights]
 
         epoch_summary = {
             'accuracy': accuracy,

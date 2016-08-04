@@ -29,7 +29,7 @@ def main():
     labels_size = len(characters)
 
     hyperparameters = net.network.NetHyperparameters(
-        epochs=10, learning_rate=0.01, regularization_coefficient=0.1, batch_size=4)
+        epochs=20, learning_rate=0.01, regularization_coefficient=0.1, batch_size=4)
 
     network = net.network.Net(
             layers=[image_size, 10, labels_size])
