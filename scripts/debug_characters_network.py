@@ -22,7 +22,7 @@ def main():
     test_data = net.characters.transform_data(test_data, encoder)
 
     network = net.network.Net.from_file("./results/characters_net.json")
-    debugger = net.network.NetworkDebugger(network, encoder)
+    debugger = net.network.Debugger(network, encoder)
 
     minimum_count = 5
     mistakes_dictionary = debugger.get_mistakes(training_data + test_data, minimum_count)

@@ -8,6 +8,9 @@ import time
 import json
 import os
 import collections
+import configobj
+import datetime
+import shelve
 
 import net.utilities
 
@@ -125,7 +128,7 @@ class Net:
             json.dump(data, file)
 
 
-class NetworkTrainer:
+class Trainer:
     """
     Class training a network
     """
@@ -135,6 +138,8 @@ class NetworkTrainer:
         self.hyperparameters = hyperparameters
 
     def train(self, network, data, test_data, output_path):
+
+        logger = Logger(network, self.hyperparameters)
 
         best_accuracy = 0
 
@@ -147,6 +152,7 @@ class NetworkTrainer:
                 print("Epoch {}".format(epoch))
                 accuracy = network.get_accuracy(test_data)
                 print(accuracy)
+                logger.log_training_progress(epoch, accuracy)
 
                 if best_accuracy < accuracy:
                     best_accuracy = accuracy
@@ -196,7 +202,7 @@ class NetworkTrainer:
                       for b, b_grad in zip(network.biases, bias_gradients)]
 
 
-class NetworkDebugger:
+class Debugger:
     """
     Class for debugging networks.
     In particular it offers insight into what classification mistakes network does
@@ -240,3 +246,53 @@ class NetworkDebugger:
                 mistakes_list_dictionary[correct_label].append(predicted_label)
 
         return mistakes_list_dictionary
+
+
+class Logger:
+    """
+    Class for logging performance of a network as it is being trained
+    """
+
+    def __init__(self, network, hyperparameters):
+
+        self.network = network
+
+        network_parameters = {
+            'topology': [l for l in self.network.layers]
+        }
+
+        hyperparameters = {
+            'initial_learning_rate': hyperparameters.learning_rate,
+            'regularization_coefficient': hyperparameters.regularization_coefficient,
+            'batch_size': hyperparameters.batch_size
+        }
+
+        database_name = configobj.ConfigObj('configuration.ini')['database_name']
+
+        if os.path.exists(database_name):
+            os.remove(database_name)
+
+        self.shelf = shelve.open(database_name, writeback=True)
+
+        self.shelf['network_parameters'] = network_parameters
+        self.shelf['hyperparameters'] = hyperparameters
+        self.shelf['training'] = {}
+        self.shelf.sync()
+
+    def log_training_progress(self, epoch, accuracy):
+
+        max_weights = [np.max(w) for w in self.network.weights]
+        min_weights = [np.min(w) for w in self.network.weights]
+
+        weights_percentiles = [np.percentile(w, [25, 50, 75, 100]) for w in self.network.weights]
+
+        epoch_summary = {
+            'accuracy': accuracy,
+            'max_weights': max_weights,
+            'min_weights': min_weights,
+            'weights_percentiles': weights_percentiles
+        }
+
+        training = self.shelf['training']
+        training[epoch] = epoch_summary
+        self.shelf.sync()

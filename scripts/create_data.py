@@ -10,6 +10,7 @@ import os
 import cv2
 import glob
 import re
+import configobj
 
 import net.vision
 
@@ -51,11 +52,14 @@ def main():
 
     video_capture = cv2.VideoCapture(0)
 
+    config = configobj.ConfigObj('configuration.ini')
+    reconstruction_size = tuple([int(value) for value in config['image_size']])
+
     while True:
 
         _, frame = video_capture.read()
 
-        card_candidates = net.vision.CardCandidatesExtractor().get_card_candidates(frame)
+        card_candidates = net.vision.CardCandidatesExtractor().get_card_candidates(frame, reconstruction_size)
 
         for candidate in card_candidates:
 

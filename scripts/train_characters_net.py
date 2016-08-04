@@ -29,12 +29,12 @@ def main():
     labels_size = len(characters)
 
     hyperparameters = net.network.NetHyperparameters(
-        epochs=1000, learning_rate=0.01, regularization_coefficient=0.1, batch_size=4)
+        epochs=10, learning_rate=0.01, regularization_coefficient=0.1, batch_size=4)
 
     network = net.network.Net(
-            layers=[image_size, 50, 50, labels_size])
+            layers=[image_size, 10, labels_size])
 
-    trainer = net.network.NetworkTrainer(hyperparameters)
+    trainer = net.network.Trainer(hyperparameters)
     trainer.train(network=network, data=training_data, test_data=test_data,
                   output_path="./results/characters_net.json")
 

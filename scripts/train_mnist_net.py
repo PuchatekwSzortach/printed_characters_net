@@ -23,7 +23,7 @@ def main():
         epochs=20, learning_rate=0.01, regularization_coefficient=0.1, batch_size=8)
 
     network = net.network.Net(layers=[image_size, 30, 10])
-    trainer = net.network.NetworkTrainer(hyperparameters)
+    trainer = net.network.Trainer(hyperparameters)
 
     trainer.train(
             network=network, data=vectorized_training_data,
