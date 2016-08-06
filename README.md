@@ -15,6 +15,7 @@ The core logic of the project is contained in scripts directory, which consists 
 - `train_mnist.py` - a sanity check script to make sure our neural network can learn standard MNIST set
 - `train_characters.py` - script for training neural network to detect templates
 - `debug_characters_network.py` - a simple script that identifies most common classification mistakes performed by characters network
+- `visualize_net_training.py` - plots network related statistics as it is trained. This helps to pin point problems when network doesn't learn well.
 - `detection.py` - detect printed templates in real time video stream
 
 Notes on data: 
