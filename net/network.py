@@ -155,7 +155,7 @@ class Trainer:
 
     def train(self, network, data, test_data, output_path):
 
-        logger = Logger(network, data, self.hyperparameters)
+        logger = Logger(network, self, data)
 
         best_accuracy = 0
 
@@ -217,6 +217,17 @@ class Trainer:
         network.biases = [b - (learning_rate * b_grad)
                       for b, b_grad in zip(network.biases, bias_gradients)]
 
+    def get_regularization_cost(self, network, data_size):
+        """
+        Return average regularization cost per training element for the network
+        :param network:
+        :return:
+        """
+
+        squared_weights_sum = np.sum([np.sum(np.square(w)) for w in network.weights])
+        cost = self.hyperparameters.regularization_coefficient * squared_weights_sum / data_size
+        return cost
+
 
 class Debugger:
     """
@@ -269,11 +280,12 @@ class Logger:
     Class for logging performance of a network as it is being trained
     """
 
-    def __init__(self, network, data, hyperparameters):
+    def __init__(self, network, trainer, data):
 
         self.network = network
+        self.trainer = trainer
 
-        batched_data = net.utilities.get_data_batches(data, hyperparameters.batch_size)
+        batched_data = net.utilities.get_data_batches(data, trainer.hyperparameters.batch_size)
 
         self.x_batches = []
         self.y_batches = []
@@ -288,9 +300,9 @@ class Logger:
         }
 
         hyperparameters = {
-            'initial_learning_rate': hyperparameters.learning_rate,
-            'regularization_coefficient': hyperparameters.regularization_coefficient,
-            'batch_size': hyperparameters.batch_size
+            'initial_learning_rate': trainer.hyperparameters.learning_rate,
+            'regularization_coefficient': trainer.hyperparameters.regularization_coefficient,
+            'batch_size': trainer.hyperparameters.batch_size
         }
 
         database_name = configobj.ConfigObj('configuration.ini')['database_name']
@@ -312,10 +324,13 @@ class Logger:
         error_cost = np.mean([self.network.get_prediction_error_cost(x_batch, y_batch)
                       for x_batch, y_batch in zip(self.x_batches, self.y_batches)])
 
+        regularization_cost = self.trainer.get_regularization_cost(self.network, len(self.x_batches))
+
         epoch_summary = {
             'accuracy': accuracy,
             'weights_percentiles': weights_percentiles,
-            'error_cost': error_cost
+            'error_cost': error_cost,
+            'regularization_cost': regularization_cost
         }
 
         training = self.shelf['training']
