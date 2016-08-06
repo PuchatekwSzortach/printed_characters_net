@@ -127,6 +127,22 @@ class Net:
         with open(output_path, "w") as file:
             json.dump(data, file)
 
+    def get_prediction_error_cost(self, x, y):
+        """
+        Given an input x and correct label y, return
+        cost of prediction network makes about x
+        :param x: matrix with columns containing input vectors
+        :param y: column vector of correct labels
+        :return: scalar cost of average prediction error
+        """
+
+        predictions = self.feedforward(x)
+        indices = np.argmax(y, axis=0)
+
+        labels_predictions = predictions[indices, range(len(indices))]
+        cost = np.mean(-np.log(labels_predictions + 1e-10))
+        return cost
+
 
 class Trainer:
     """
@@ -139,7 +155,7 @@ class Trainer:
 
     def train(self, network, data, test_data, output_path):
 
-        logger = Logger(network, self.hyperparameters)
+        logger = Logger(network, data, self.hyperparameters)
 
         best_accuracy = 0
 
@@ -163,7 +179,7 @@ class Trainer:
 
             batched_data = net.utilities.get_data_batches(data, self.hyperparameters.batch_size)
 
-            for index, batch in enumerate(batched_data):
+            for batch in batched_data:
                 x_batch, y_batch = net.utilities.data_tuples_to_matrices(batch)
                 self._update(network, x_batch, y_batch, self.hyperparameters.learning_rate)
 
@@ -253,9 +269,19 @@ class Logger:
     Class for logging performance of a network as it is being trained
     """
 
-    def __init__(self, network, hyperparameters):
+    def __init__(self, network, data, hyperparameters):
 
         self.network = network
+
+        batched_data = net.utilities.get_data_batches(data, hyperparameters.batch_size)
+
+        self.x_batches = []
+        self.y_batches = []
+
+        for batch in batched_data:
+            x_batch, y_batch = net.utilities.data_tuples_to_matrices(batch)
+            self.x_batches.append(x_batch)
+            self.y_batches.append(y_batch)
 
         network_parameters = {
             'topology': [l for l in self.network.layers]
@@ -283,9 +309,13 @@ class Logger:
 
         weights_percentiles = [np.percentile(w, [0, 25, 50, 75, 100]) for w in self.network.weights]
 
+        error_cost = np.mean([self.network.get_prediction_error_cost(x_batch, y_batch)
+                      for x_batch, y_batch in zip(self.x_batches, self.y_batches)])
+
         epoch_summary = {
             'accuracy': accuracy,
-            'weights_percentiles': weights_percentiles
+            'weights_percentiles': weights_percentiles,
+            'error_cost': error_cost
         }
 
         training = self.shelf['training']

@@ -13,20 +13,27 @@ def plot_training_data(training_data):
     epochs = sorted(training_data.keys())
     layers_count = len(training_data[0]['weights_percentiles'])
 
-    figure, axes = plt.subplots(layers_count + 1, 1, sharex=True)
-    accuracy = [training_data[epoch]['accuracy'] for epoch in epochs]
+    plots_count = layers_count + 2
+    figure, axes = plt.subplots(plots_count, 1, sharex=True)
 
+    accuracy = [training_data[epoch]['accuracy'] for epoch in epochs]
     axes[0].plot(epochs, accuracy)
     axes[0].set_ylim([0, 1])
     axes[0].set_title('Accuracy')
 
+    error_cost = [training_data[epoch]['error_cost'] for epoch in epochs]
+    axes[1].plot(epochs, error_cost)
+    axes[1].set_title('Error cost')
+
+    print("Plots count: {}".format(plots_count))
+
     # Plot weights
-    for layer, axis in zip(range(layers_count), axes[1:]):
+    for layer, axis in zip(range(layers_count), axes[2:]):
 
         # This gives me a list of epochs size, each element of which contains values of different
         # percentiles at that epoch
         weights_percentiles = [training_data[epoch]['weights_percentiles'][layer] for epoch in epochs]
-
+        
         # Now transpose above, so we have n percentiles lists, each of epochs numbers length
         individual_percentiles = [percentile for percentile in zip(*weights_percentiles)]
         labels = ['0%', '25%', '50%', '75%', '100%']
