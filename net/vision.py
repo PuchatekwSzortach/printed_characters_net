@@ -5,6 +5,7 @@ Detecting card candidates in images, handling image contours and like.
 import cv2
 import numpy as np
 
+
 class CardCandidate:
     """
     A very simple container for a card candidate

@@ -1,0 +1,9 @@
+configobj==5.0.6
+numpy==1.11.1
+orderedset==2.0
+Pillow==3.3.0
+py==1.4.31
+pytest==2.9.2
+reportlab==3.3.0
+six==1.10.0
+tqdm==4.8.3

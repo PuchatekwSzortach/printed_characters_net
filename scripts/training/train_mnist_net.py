@@ -3,9 +3,6 @@ File for training network on mnist data.
 This acts as a sanity check that our network code really can learn and predict.
 """
 
-import numpy as np
-import cv2
-import warnings
 import net.mnist
 import net.network
 

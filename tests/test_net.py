@@ -1,6 +1,7 @@
 import numpy as np
 import net.utilities
 
+
 def test_sigmoid():
 
     z = np.array([-1000, 0, 0, -1000])

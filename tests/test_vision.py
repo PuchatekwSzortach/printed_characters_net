@@ -6,6 +6,7 @@ import pytest
 
 import net.vision
 
+
 def test_get_ordered_card_contour_throws_on_bad_input():
 
     with pytest.raises(ValueError):

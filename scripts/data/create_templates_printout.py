@@ -63,15 +63,13 @@ def main():
     paths = glob.glob("../../data/characters/templates/*.jpg")
 
     templates = [cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY) for path in paths]
-    bordered_templates = [net.printing.get_image_with_border(template, 2) for template in templates]
-
     temporary_dir = "/tmp/templates/"
 
     # Make directory for temporary images if it doesn't already exist
     os.makedirs(temporary_dir, exist_ok=True)
 
     # Write bordered images to temporary dir
-    for path, template in zip(paths, bordered_templates):
+    for path, template in zip(paths, templates):
         temporary_path = temporary_dir + os.path.basename(path)
         cv2.imwrite(temporary_path, template)
 
