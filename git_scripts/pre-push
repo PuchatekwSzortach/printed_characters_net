@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Required to get hook work with Sourcetree
+source ~/.bash_profile
+
+function run_flake8 {
+
+    local result=`flake8 .`
+
+    if [[ $result ]]; then
+        echo "$result"
+        return 1
+    else
+        return 0
+    fi
+
+}
+
+function run_pytest {
+
+    local pytest_result=`py.test .`
+
+    echo "$pytest_result"
+
+    # Check if output contains a line saying "FAILURES"
+    local failures_line=`echo $pytest_result | grep "FAILURES"`
+
+    if [[ $failures_line ]]; then
+        return 1
+    else
+        return 0
+    fi
+
+}
+
+run_flake8
+result=$?
+
+if [ $result -ne 0 ]; then
+        echo "flake8 failed"
+        exit 1
+fi
+
+run_pytest
+result=$?
+
+if [ $result -ne 0 ]; then
+        echo "py.test failed"
+        exit 1
+fi
