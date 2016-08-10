@@ -7,15 +7,15 @@ It contains code to train neural networks to detect printed characters in real t
 
 The network is capable to learn to detect reasonably well as much as 250 different characters, including Latin alphabet, digits, hiragana, katakana and kanji.
 
-The core logic of the project is contained in scripts directory, which consists of following programs:
+The core logic of the project is contained in `scripts directory`, which consists of following programs:
 - `data/`
     - `create_templates.py` - creates plain images of characters we want to recognize
     - `create_templates_printout.py` - creates a pdf with template images that can be cut out to later use them in real-time detection
     - `create_data.py` - using templates obtained from `create_templates_printout.py` and a camera, capture characters images that can be used for training
-    - `create_artificial_data.py` - given templates, create an artificially augmented dataset used for training
+    - `create_artificial_data.py` - given templates, create an artificial dataset for training
 - `training/`
-    - `train_mnist.py` - a sanity check script to make sure our neural network can learn standard MNIST set
-    - `train_characters.py` - script for training neural network to detect templates
+    - `train_mnist.py` - a sanity check script to make sure the neural network can learn standard MNIST set
+    - `train_characters.py` - script for training neural network to detect printed characters
 - `debugging/`
     - `debug_characters_network.py` - prints out most common mistakes made by characters network
     - `load_characters_net.py` - checks characters net can be successfully loaded, evaluates its accuracy
