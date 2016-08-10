@@ -1,21 +1,16 @@
 """
 A script for creating a pdf with all templates.
 """
+import glob
+import os.path
+import shutil
 
+import cv2
 import reportlab.platypus
 import reportlab.lib.styles
 import reportlab.lib.units
 import reportlab.pdfgen.canvas
 import reportlab.lib.pagesizes
-
-import glob
-import cv2
-import numpy as np
-
-import os.path
-import shutil
-import net.printing
-
 
 
 def create_page(canvas, canvas_size, paths_iterator, image_size, margin):

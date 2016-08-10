@@ -22,9 +22,8 @@ def main():
     network = net.network.Net(layers=[image_size, 30, 10])
     trainer = net.network.Trainer(hyperparameters)
 
-    trainer.train(
-            network=network, data=vectorized_training_data,
-            test_data=vectorized_test_data, output_path='./results/mnist_net.json')
+    trainer.train(network=network, data=vectorized_training_data,
+                  test_data=vectorized_test_data, output_path='./results/mnist_net.json')
 
     test_accuracy = network.get_accuracy(vectorized_test_data)
     print("Test accuracy is {}".format(test_accuracy))

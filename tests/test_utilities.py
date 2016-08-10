@@ -1,6 +1,7 @@
 import numpy as np
 import net.utilities
 
+
 class TestEncoder:
 
     def test_encoding(self):

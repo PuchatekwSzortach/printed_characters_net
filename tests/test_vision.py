@@ -10,10 +10,10 @@ import net.vision
 def test_get_ordered_card_contour_throws_on_bad_input():
 
     with pytest.raises(ValueError):
-        net.vision.get_ordered_card_contour(np.zeros(shape=(5,2)))
+        net.vision.get_ordered_card_contour(np.zeros(shape=(5, 2)))
 
     with pytest.raises(ValueError):
-        net.vision.get_ordered_card_contour(np.zeros(shape=(3,2)))
+        net.vision.get_ordered_card_contour(np.zeros(shape=(3, 2)))
 
 
 def test_get_ordered_card_contour_ordered_input():

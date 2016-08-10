@@ -4,12 +4,10 @@ Module with network code
 import warnings
 import numpy as np
 import random
-import time
 import json
 import os
 import collections
 import configobj
-import datetime
 import shelve
 
 import net.utilities
@@ -217,10 +215,10 @@ class Trainer:
                 regularization_derivative
 
         network.weights = [w - (learning_rate * w_grad)
-                       for w, w_grad in zip(network.weights, weights_gradients)]
+                            for w, w_grad in zip(network.weights, weights_gradients)]
 
         network.biases = [b - (learning_rate * b_grad)
-                      for b, b_grad in zip(network.biases, bias_gradients)]
+                            for b, b_grad in zip(network.biases, bias_gradients)]
 
     def get_regularization_cost(self, network):
         """
@@ -329,7 +327,7 @@ class Logger:
         weights_percentiles = [np.percentile(w, [0, 25, 50, 75, 100]) for w in self.network.weights]
 
         error_cost = np.mean([self.network.get_prediction_error_cost(x_batch, y_batch)
-                      for x_batch, y_batch in zip(self.x_batches, self.y_batches)])
+                                for x_batch, y_batch in zip(self.x_batches, self.y_batches)])
 
         regularization_cost = self.trainer.get_regularization_cost(self.network)
 
