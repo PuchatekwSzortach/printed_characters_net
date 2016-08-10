@@ -165,15 +165,26 @@ def is_contour_card_like(contour, image_size):
     max_area = 0.3 * image_size
     min_area = 0.001 * image_size
 
+    # Only contours with 4 points can be card candidates
+    if len(contour) != 4:
+        return False
+
     contour_area = cv2.contourArea(contour)
 
-    # Return contours that are within acceptable size
+    # Contours must be within acceptable size
     if contour_area < min_area or max_area < contour_area:
         return False
 
-    # And made of only four points - since our frames should be represented by
-    # four points
-    return len(contour) == 4
+    squeezed_contour = np.squeeze(contour)
+    min_angle = get_minimum_inner_angle(squeezed_contour)
+    max_angle = get_maximum_inner_angle(squeezed_contour)
+
+    # And have inner angles somewhat close to right angles
+    if min_angle < np.pi / 6 or np.pi / 1.5 < max_angle:
+        return False
+
+    # All tests passed, so judge contour as card like
+    return True
 
 
 def get_contours_inner_angles(contour):
