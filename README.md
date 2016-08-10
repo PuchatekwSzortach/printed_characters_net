@@ -8,14 +8,19 @@ It contains code to train neural networks to detect printed characters in real t
 The network is capable to learn to detect reasonably well as much as 250 different characters, including Latin alphabet, digits, hiragana, katakana and kanji.
 
 The core logic of the project is contained in scripts directory, which consists of following programs:
-- `create_templates.py` - creates plain images of characters we want to recognize
-- `create_templates_printout.py` - creates a pdf with template images that can be cut out to later use them in real-time detection
-- `create_data.py` - using templates obtained from `create_templates_printout.py` and a camera, capture characters images that can be used for training
-- `create_artificial_data.py` - given templates, create an artificially augmented dataset used for training
-- `train_mnist.py` - a sanity check script to make sure our neural network can learn standard MNIST set
-- `train_characters.py` - script for training neural network to detect templates
-- `debug_characters_network.py` - a simple script that identifies most common classification mistakes performed by characters network
-- `visualize_net_training.py` - plots network related statistics as it is trained. This helps to pin point problems when network doesn't learn well.
+- data/
+    - `create_templates.py` - creates plain images of characters we want to recognize
+    - `create_templates_printout.py` - creates a pdf with template images that can be cut out to later use them in real-time detection
+    - `create_data.py` - using templates obtained from `create_templates_printout.py` and a camera, capture characters images that can be used for training
+    - `create_artificial_data.py` - given templates, create an artificially augmented dataset used for training
+- training/
+    - `train_mnist.py` - a sanity check script to make sure our neural network can learn standard MNIST set
+    - `train_characters.py` - script for training neural network to detect templates
+- debugging/
+    - `debug_characters_network.py` - prints out most common mistakes made by characters network
+    - `load_characters_net.py` - checks characters net can be successfully loaded, evaluates its accuracy
+    - `load_mnist_net.py` - checks mnist net can be successfully loaded, evaluates its accuracy
+    - `visualize_net_training.py` - plots training statistics of network over time
 - `detection.py` - detect printed templates in real time video stream
 
 You can see the detection in action in [this Youtube video](https://youtu.be/AXWB80zUxd8). This particular network was trained on artificial data to detect 80 different kanji characters. As you can see, it gets many of them right, and mistakes it makes are mostly plausible.
