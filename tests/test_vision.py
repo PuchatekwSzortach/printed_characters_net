@@ -103,3 +103,30 @@ def test_get_minimum_inner_angle_30deg_triangle():
     )
 
     assert np.isclose(np.pi / 6, net.vision.get_minimum_inner_angle(contour))
+
+
+def test_get_maximum_inner_angle_square_input():
+
+    contour = np.array(
+        [
+            [0, 0],
+            [0, 10],
+            [10, 10],
+            [10, 0]
+        ]
+    )
+
+    assert np.isclose(np.pi / 2, net.vision.get_minimum_inner_angle(contour))
+
+
+def test_get_maximum_inner_angle_135deg_triangle():
+
+    contour = np.array(
+        [
+            [0, 0],
+            [10, 0],
+            [20, 10]
+        ]
+    )
+
+    assert np.isclose(135 * np.pi / 180, net.vision.get_maximum_inner_angle(contour))

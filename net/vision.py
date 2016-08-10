@@ -176,12 +176,11 @@ def is_contour_card_like(contour, image_size):
     return len(contour) == 4
 
 
-def get_minimum_inner_angle(contour):
+def get_contours_inner_angles(contour):
     """
-    Given a list of 2D points representing a closed contour,
-    return smallest inner angle
-    :param contour: a list of 2D points
-    :return: angle in radians
+    Given a closed contour, return a list of its inner angles in radians
+    :param contour: a 2D numpy array
+    :return: 1D numpy array of angles in radions
     """
 
     # Unroll all points triplets to vectors
@@ -194,4 +193,26 @@ def get_minimum_inner_angle(contour):
     c_side = np.linalg.norm(c - a, axis=1)
 
     cosines = (a_side**2 + b_side**2 - c_side**2) / (2 * a_side * b_side)
-    return np.min(np.arccos(cosines))
+    return np.arccos(cosines)
+
+
+def get_minimum_inner_angle(contour):
+    """
+    Given a list of 2D points representing a closed contour,
+    return smallest inner angle
+    :param contour: a 2D numpy array
+    :return: angle in radians
+    """
+
+    return np.min(get_contours_inner_angles(contour))
+
+
+def get_maximum_inner_angle(contour):
+    """
+    Given a list of 2D points representing a closed contour,
+    return largest inner angle
+    :param contour: a 2D numpy array
+    :return: angle in radians
+    """
+
+    return np.max(get_contours_inner_angles(contour))
