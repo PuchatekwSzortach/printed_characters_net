@@ -3,9 +3,9 @@
 `Printed characters net` is a project that demonstrates use of neural networks for characters recognition.
 It contains code to train neural networks to detect printed characters in real time video, like in screenshot below.
 
-![kanji_detection](./readme/kanji_detection.png)
+![kanji_detection](./readme/kanji_detection.jpg)
 
-Current network design is capable of learning to detect over 250 characters (Latin alphabet, digits, hiragana, katanaka and Jouyou Level 1 kanji) with about ~95% accuracy in ~10mins of training on MacBook Pro 2014. Another two hours of training can raise this to ~98%.
+The network is capable to learn to detect reasonably well as much as 250 different characters, including Latin alphabet, digits, hiragana, katakana and kanji.
 
 The core logic of the project is contained in scripts directory, which consists of following programs:
 - `create_templates.py` - creates plain images of characters we want to recognize
@@ -18,10 +18,13 @@ The core logic of the project is contained in scripts directory, which consists 
 - `visualize_net_training.py` - plots network related statistics as it is trained. This helps to pin point problems when network doesn't learn well.
 - `detection.py` - detect printed templates in real time video stream
 
+You can see the detection in action in [this Youtube video](https://youtu.be/AXWB80zUxd8). This particular network was trained on artificial data to detect 80 different kanji characters. As you can see, it gets many of them right, and mistakes it makes are mostly plausible.
+
 Notes on data: 
 
-1. You can control amount of artificial data created with constants defined in `create_artificial_data.py`. Given ~250 labels I recommend going for ~400 images per label - this should let you create all data and train the classifier to ~95% accuracy in under 15mins on an decent machine. You can get 90% results in 5mins or so when using 250 images per label.  
-2. Best results are of course obtained with real data, but even artificial data can work really well, especially if characters set is constrained to a small size, say only latin characters.
+1. You can control amount of artificial data created with constants defined in `create_artificial_data.py`. Given ~250 labels I recommend going for ~400 images per label - this should let you create all data and train the classifier to ~95% accuracy on artificial data in under 15mins on an decent machine. You can get 90% results in 5mins or so when using 250 images per label.
+2. Best results are of course obtained with real data, but even artificial data can work really well, especially if characters set is constrained to a small size, say only Latin characters.
+3. Naturally the smaller the overall character set, the easier the task becomes for the net. You can control the set size by modifying `create_templates.py`. Don't forget to wipe out old data and rerun other setup scripts afterwards.
 
 NOTE:
 This project uses mostly plain numpy for neural networks code. I'm aware of frameworks like Theano and Tensorflow that could do a lot of heavy lifting for me, while at the same time providing faster execution on Nvidia GPUs, but my main goal for this project is to check my own understanding of neural networks concepts. Hence I strive to implement all steps of the learning algorithm from a scratch.

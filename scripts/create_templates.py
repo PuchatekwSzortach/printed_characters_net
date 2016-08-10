@@ -59,10 +59,8 @@ def main():
 
     font = PIL.ImageFont.truetype("/Library/Fonts/Osaka.ttf", size=100)
 
-    # characters = list(string.ascii_uppercase) + get_hiragana_set() +\
-    #              get_katakana_set() + get_digits_set() + get_kanji_set()
-
-    characters = get_kanji_set()
+    characters = list(string.ascii_uppercase) + get_hiragana_set() +\
+                 get_katakana_set() + get_digits_set() + get_kanji_set()
 
     characters = net.utilities.remove_visually_identical_characters(characters)
 
