@@ -39,10 +39,15 @@ class Net:
 
         self.layers = layers
 
-        self.biases = [np.random.rand(nodes_out, 1) for nodes_out in layers[1:]]
+        self.biases = [np.zeros(shape=[nodes_out, 1], dtype=np.float32) for nodes_out in layers[1:]]
 
-        self.weights = [np.random.rand(nodes_out, nodes_in) / np.sqrt(nodes_in)
-                        for nodes_in, nodes_out in zip(layers[:-1], layers[1:])]
+        self.weights = []
+
+        for index, (nodes_in, nodes_out) in enumerate(zip(layers[:-1], layers[1:])):
+
+            standard_deviation = np.sqrt(2 / nodes_in)
+            weights = np.random.normal(0, standard_deviation, size=[nodes_out, nodes_in])
+            self.weights.append(weights)
 
     @staticmethod
     def from_file(path):
@@ -217,7 +222,7 @@ class Trainer:
         network.biases = [b - (learning_rate * b_grad)
                       for b, b_grad in zip(network.biases, bias_gradients)]
 
-    def get_regularization_cost(self, network, data_size):
+    def get_regularization_cost(self, network):
         """
         Return average regularization cost per training element for the network
         :param network:
@@ -225,7 +230,9 @@ class Trainer:
         """
 
         squared_weights_sum = np.sum([np.sum(np.square(w)) for w in network.weights])
-        cost = self.hyperparameters.regularization_coefficient * squared_weights_sum / data_size
+        cost = self.hyperparameters.regularization_coefficient * squared_weights_sum / \
+               self.hyperparameters.batch_size
+
         return cost
 
 
@@ -305,17 +312,17 @@ class Logger:
             'batch_size': trainer.hyperparameters.batch_size
         }
 
-        database_name = configobj.ConfigObj('configuration.ini')['database_name']
+        self.database_path = configobj.ConfigObj('configuration.ini')['database_path']
 
-        if os.path.exists(database_name):
-            os.remove(database_name)
+        if os.path.exists(self.database_path):
+            os.remove(self.database_path)
 
-        self.shelf = shelve.open(database_name, writeback=True)
-
-        self.shelf['network_parameters'] = network_parameters
-        self.shelf['hyperparameters'] = hyperparameters
-        self.shelf['training'] = {}
-        self.shelf.sync()
+        shelf = shelve.open(self.database_path, writeback=True)
+        shelf['network_parameters'] = network_parameters
+        shelf['hyperparameters'] = hyperparameters
+        shelf['training'] = {}
+        shelf.sync()
+        shelf.close()
 
     def log_training_progress(self, epoch, accuracy):
 
@@ -324,7 +331,7 @@ class Logger:
         error_cost = np.mean([self.network.get_prediction_error_cost(x_batch, y_batch)
                       for x_batch, y_batch in zip(self.x_batches, self.y_batches)])
 
-        regularization_cost = self.trainer.get_regularization_cost(self.network, len(self.x_batches))
+        regularization_cost = self.trainer.get_regularization_cost(self.network)
 
         epoch_summary = {
             'accuracy': accuracy,
@@ -333,6 +340,8 @@ class Logger:
             'regularization_cost': regularization_cost
         }
 
-        training = self.shelf['training']
+        shelf = shelve.open(self.database_path, writeback=True)
+        training = shelf['training']
         training[epoch] = epoch_summary
-        self.shelf.sync()
+        shelf.sync()
+        shelf.close()

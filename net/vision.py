@@ -174,3 +174,24 @@ def is_contour_card_like(contour, image_size):
     # And made of only four points - since our frames should be represented by
     # four points
     return len(contour) == 4
+
+
+def get_minimum_inner_angle(contour):
+    """
+    Given a list of 2D points representing a closed contour,
+    return smallest inner angle
+    :param contour: a list of 2D points
+    :return: angle in radians
+    """
+
+    # Unroll all points triplets to vectors
+    a = contour
+    b = np.tile(contour, reps=(2, 1))[1:1 + len(contour)]
+    c = np.tile(contour, reps=(2, 1))[2:2 + len(contour)]
+
+    a_side = np.linalg.norm(b - a, axis=1)
+    b_side = np.linalg.norm(c - b, axis=1)
+    c_side = np.linalg.norm(c - a, axis=1)
+
+    cosines = (a_side**2 + b_side**2 - c_side**2) / (2 * a_side * b_side)
+    return np.min(np.arccos(cosines))

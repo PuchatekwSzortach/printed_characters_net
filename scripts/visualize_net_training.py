@@ -29,8 +29,6 @@ def plot_training_data(training_data):
     axes[1].set_title('Cost')
     axes[1].legend()
 
-    print("Plots count: {}".format(plots_count))
-
     # Plot weights
     for layer, axis in zip(range(layers_count), axes[statistics_count:]):
 
@@ -54,8 +52,8 @@ def plot_training_data(training_data):
 
 def main():
 
-    database_name = configobj.ConfigObj('configuration.ini')['database_name']
-    shelf = shelve.open(database_name, writeback=True)
+    database_path = configobj.ConfigObj('configuration.ini')['database_path']
+    shelf = shelve.open(database_path, writeback=True)
     print(shelf['network_parameters'])
     print(shelf['hyperparameters'])
 
